@@ -2,7 +2,7 @@ use log::LevelFilter;
 use nom::{
     IResult, Parser,
     branch::alt,
-    bytes::complete::{tag, tag_no_case, take_till1},
+    bytes::complete::{tag, tag_no_case, take_till1, take_while1},
     character::complete::{line_ending, not_line_ending, space0},
     combinator::eof,
     multi::many1,
@@ -20,6 +20,9 @@ fn main() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
+fn non_blank(c: char) -> bool {
+    c != ' ' && c != '\t' && c != '\r' && c != '\n'
+}
 macro_rules! reserved_word {
     ($n:ident, $tag:literal, $fun:ident, $a:ident, $t:ty) => {
         fn $n($a: $t) -> IResult<$t, $t> {
@@ -60,7 +63,7 @@ fn wspace_any(input: &str) -> IResult<&str, &str> {
     space0(val.0)
 }
 fn non_blank_chars(input: &str) -> IResult<&str, &str> {
-    take_till1(|c| c == ' ' || c == '\t' || c == '\r' || c == '\n')(input)
+    take_while1(non_blank)(input)
 }
 res_word!(magic_code, r"#\#CIF_2.0");
 res_word_nocase!(data_token, "data_");
@@ -73,25 +76,43 @@ res_word_nocase!(stop_token, "stop_");
 #[case(
     comment,
     "#Asdiuybe9oniudbnfv   sieucvbn98\n",
-    "Asdiuybe9oniudbnfv   sieucvbn98"
+    "Asdiuybe9oniudbnfv   sieucvbn98",
+    true
 )]
 #[case(
     comment,
     "#Asdiuybe9oniudbnfv   sieucvbn98",
-    "Asdiuybe9oniudbnfv   sieucvbn98"
+    "Asdiuybe9oniudbnfv   sieucvbn98",
+    true
 )]
-#[case(data_token, "DaTa_asdh8907hiuh", "asdh8907hiuh")]
-#[case(non_blank_chars, "asdhb87^TG*(&^Gsd78a6g   ", "asdhb87^TG*(&^Gsd78a6g")]
-#[case(non_blank_chars, "asdhb87^TG*(&^Gsd78a6g", "asdhb87^TG*(&^Gsd78a6g")]
-#[case(non_blank_chars, "öµ\tyy7893h4", "öµ")]
+#[case(data_token, "DaTa_asdh8907hiuh", "asdh8907hiuh", true)]
+#[case(
+    non_blank_chars,
+    "asdhb87^TG*(&^Gsd78a6g   ",
+    "asdhb87^TG*(&^Gsd78a6g",
+    true
+)]
+#[case(
+    non_blank_chars,
+    "asdhb87^TG*(&^Gsd78a6g",
+    "asdhb87^TG*(&^Gsd78a6g",
+    true
+)]
+#[case(non_blank_chars, "öµ\tyy7893h4", "öµ", true)]
+#[case(non_blank_chars, "  ashd87", "  ", false)]
 fn test_parser_components(
     #[case] func: fn(&str) -> IResult<&str, &str>,
     #[case] input: &str,
     #[case] expected: &str,
+    #[case] good: bool,
 ) {
     let test = func(input);
-    assert!(test.is_ok());
-    let res = test.unwrap();
-    println!("e: {:?} - f: {:?}", expected, res);
-    assert!(res.0 == expected || res.1 == expected)
+    if good {
+        assert!(test.is_ok());
+        let res = test.unwrap();
+        println!("e: {:?} - f: {:?}", expected, res);
+        assert!(res.0 == expected || res.1 == expected)
+    } else {
+        assert!(test.is_err())
+    }
 }
