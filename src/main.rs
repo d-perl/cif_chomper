@@ -2,7 +2,7 @@ use log::LevelFilter;
 use nom::{
     IResult, Parser,
     branch::alt,
-    bytes::complete::{tag, tag_no_case, take_till1, take_while1},
+    bytes::complete::{tag, tag_no_case, take_till1, take_until, take_while, take_while1},
     character::complete::{line_ending, not_line_ending, space0},
     combinator::eof,
     multi::many1,
@@ -21,7 +21,13 @@ fn main() -> Result<(), Box<dyn Error>> {
 }
 
 fn non_blank(c: char) -> bool {
-    c != ' ' && c != '\t' && c != '\r' && c != '\n'
+    ![' ', '\t', '\r', '\n'].contains(&c)
+}
+fn restrict_char(c: char) -> bool {
+    non_blank(c) && !['[', ']', '{', '}'].contains(&c)
+}
+fn lead_char(c: char) -> bool {
+    restrict_char(c) && !['"', '#', '$', '\'', '_'].contains(&c)
 }
 macro_rules! reserved_word {
     ($n:ident, $tag:literal, $fun:ident, $a:ident, $t:ty) => {
@@ -45,7 +51,7 @@ fn eol_or_eof(input: &str) -> IResult<&str, &str> {
     alt((line_ending, eof)).parse(input)
 }
 fn text_delim(input: &str) -> IResult<&str, &str> {
-    alt((eol_or_eof, tag(";"))).parse(input)
+    tag(";")(line_ending(input)?.0)
 }
 fn comment(input: &str) -> IResult<&str, &str> {
     let val = tag("#")(input)?;
@@ -65,6 +71,13 @@ fn wspace_any(input: &str) -> IResult<&str, &str> {
 fn non_blank_chars(input: &str) -> IResult<&str, &str> {
     take_while1(non_blank)(input)
 }
+fn text_content(input: &str) -> IResult<&str, &str> {
+    alt((take_until("\n;"), take_until("\r\n;"), take_until("\r;"))).parse(input)
+}
+fn text_field(input: &str) -> IResult<&str, &str> {
+    text_delim(text_content(text_delim(input)?.0)?.0)
+}
+
 res_word!(magic_code, r"#\#CIF_2.0");
 res_word_nocase!(data_token, "data_");
 res_word_nocase!(save_token, "save_");
@@ -99,7 +112,11 @@ res_word_nocase!(stop_token, "stop_");
     true
 )]
 #[case(non_blank_chars, "öµ\tyy7893h4", "öµ", true)]
-#[case(non_blank_chars, "  ashd87", "  ", false)]
+#[case(non_blank_chars, "  ashd87", "", false)]
+#[case(text_delim, "\n;abc", "abc", true)]
+#[case(text_delim, "\n;abc123\nxyz987\n;abc", "abc123\nxyz987\n;abc", true)]
+#[case(text_content, "abc123\nxyz987\n;abc", "\n;abc", true)]
+#[case(text_field, "\n;abc123\nxyz987\n;abc", "abc", true)]
 fn test_parser_components(
     #[case] func: fn(&str) -> IResult<&str, &str>,
     #[case] input: &str,
@@ -107,6 +124,7 @@ fn test_parser_components(
     #[case] good: bool,
 ) {
     let test = func(input);
+    dbg!(&test);
     if good {
         assert!(test.is_ok());
         let res = test.unwrap();
