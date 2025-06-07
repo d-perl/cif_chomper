@@ -1,15 +1,14 @@
-use log::{LevelFilter, debug};
+use log::LevelFilter;
 use nom::{
     IResult, Parser,
     branch::alt,
-    bytes::complete::{tag, tag_no_case, take_till},
-    character::complete::{line_ending, not_line_ending},
-    combinator::{eof, opt},
-    multi::SeparatedList0,
+    bytes::complete::{tag, tag_no_case},
+    character::complete::{char, line_ending, not_line_ending, space0},
+    combinator::eof,
     sequence::terminated,
 };
 use rstest::rstest;
-use std::{any::Any, error::Error};
+use std::error::Error;
 mod logging;
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -23,9 +22,19 @@ fn main() -> Result<(), Box<dyn Error>> {
 fn eol_or_eof(input: &str) -> IResult<&str, &str> {
     alt((line_ending, eof)).parse(input)
 }
-fn parse_comment(input: &str) -> IResult<&str, &str> {
+fn text_delim(input: &str) -> IResult<&str, &str> {
+    alt((eol_or_eof, tag(";"))).parse(input)
+}
+fn comment(input: &str) -> IResult<&str, &str> {
     let val = tag("#")(input)?;
     terminated(not_line_ending, eol_or_eof).parse(val.0)
+}
+fn comment_or_eol(input: &str) -> IResult<&str, &str> {
+    alt((comment, eol_or_eof)).parse(input)
+}
+fn wspace_to_eol(input: &str) -> IResult<&str, &str> {
+    let val = space0(input)?;
+    comment_or_eol(val.0)
 }
 
 macro_rules! reserved_word {
@@ -59,8 +68,8 @@ res_word_nocase!(stop_token, "stop_");
     "Asdiuybe9oniudbnfv   sieucvbn98"
 )]
 #[case("#Asdiuybe9oniudbnfv   sieucvbn98", "Asdiuybe9oniudbnfv   sieucvbn98")]
-fn test_parse_comment(#[case] input: &str, #[case] expected: &str) {
-    let test = parse_comment(input);
+fn test_comment(#[case] input: &str, #[case] expected: &str) {
+    let test = comment(input);
     println!("############ {:?}", test);
     assert!(test.is_ok());
     assert_eq!(test.unwrap().1, expected);
