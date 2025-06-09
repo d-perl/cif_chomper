@@ -4,6 +4,8 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+const-str = "0.6.2"
+env = "1.0.1"
 log = "0.4.27"
 nom = "8.0.0"
 rstest = "0.25.0"

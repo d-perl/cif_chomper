@@ -1,3 +1,4 @@
+#\#CIF_2.0
 #------------------------------------------------------------------------------
 #$Date: 2016-02-16 22:30:59 +0200 (Tue, 16 Feb 2016) $
 #$Revision: 176467 $
@@ -17,7 +18,7 @@ _publ_author_name
 'Millange, F.'
 'Serre, C.'
 'Van Tendeloo, G.'
-'F\'erey, G.'
+#'F\'erey, G.'
 _publ_section_title
 ;
 First direct imaging of giant pores of the Metal-Organic Framework MIL-101
