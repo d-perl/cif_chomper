@@ -10,4 +10,13 @@ pub struct RawModel<'a> {
 
 pub struct RawDataBlock<'a> {
     pub heading: &'a str,
+    pub content: Vec<RawDataItem<'a>>,
+}
+
+#[derive(Debug)]
+
+pub enum RawDataItem<'a> {
+    SaveFrame(&'a str),
+    Data { name: &'a str, value: &'a str },
+    Loop(&'a str),
 }

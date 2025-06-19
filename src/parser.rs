@@ -1,4 +1,4 @@
-use crate::model::{self, RawDataBlock, RawModel};
+use crate::model::{self, RawDataBlock, RawDataItem, RawModel};
 use const_str::to_char_array;
 use nom::{
     IResult, Parser,
@@ -214,27 +214,27 @@ fn table_entry(input: &str) -> IResult<&str, &str> {
     let (inp, value) = alt((nospace_value, wsdelim_string, wspace_data_value)).parse(inp)?;
     Ok((inp, ""))
 }
-fn data_loop(input: &str) -> IResult<&str, &str> {
+fn data_loop(input: &str) -> IResult<&str, RawDataItem> {
     let (inp, _) = loop_token(input)?;
     let (inp, _) = wspace(inp)?;
     let (inp, names) = separated_list1(wspace, data_name).parse(inp)?;
     //TODO: n values should be multiple of labels
     let (inp, values) = many1(wspace_data_value).parse(inp)?;
     dbg!((names, values));
-    Ok((inp, ""))
+    Ok((inp, RawDataItem::Loop("loop")))
 }
-fn data(input: &str) -> IResult<&str, &str> {
+fn data(input: &str) -> IResult<&str, RawDataItem> {
     let data_item = |inp| {
         let (inp_, name) = data_name(inp)?;
         let (inp_, value) = wspace_data_value(inp_)?;
-        Ok((inp_, ""))
+        Ok((inp_, RawDataItem::Data { name, value }))
     };
     alt((data_item, data_loop)).parse(input)
 }
 fn container_code(input: &str) -> IResult<&str, &str> {
     take_while1(non_blank).parse(input)
 }
-fn frame_content(input: &str) -> IResult<&str, &str> {
+fn frame_content(input: &str) -> IResult<&str, RawDataItem> {
     let (inp, _) = wspace(input)?;
     data(inp)
 }
@@ -242,16 +242,17 @@ fn save_heading(input: &str) -> IResult<&str, &str> {
     let (inp, _) = save_token(input)?;
     container_code(inp)
 }
-fn save_frame(input: &str) -> IResult<&str, &str> {
-    let (inp, _) = save_heading(input)?;
+fn save_frame(input: &str) -> IResult<&str, RawDataItem> {
+    let (inp, save) = save_heading(input)?;
     let (inp, _) = many0(frame_content).parse(inp)?;
     let (inp, _) = wspace(inp)?;
     let (inp, _) = save_token(inp)?;
-    Ok((inp, ""))
+    Ok((inp, RawDataItem::SaveFrame(save)))
 }
-fn block_content(input: &str) -> IResult<&str, &str> {
+fn block_content(input: &str) -> IResult<&str, RawDataItem> {
     let (inp, _) = wspace(input)?;
-    alt((data, save_frame)).parse(inp)
+    let (inp, cont) = alt((data, save_frame)).parse(inp)?;
+    Ok((inp, cont))
 }
 fn data_heading(input: &str) -> IResult<&str, &str> {
     let (inp, _) = data_token(input)?;
@@ -260,8 +261,8 @@ fn data_heading(input: &str) -> IResult<&str, &str> {
 fn data_block(input: &str) -> IResult<&str, RawDataBlock> {
     let (inp, heading) = data_heading(input)?;
     dbg!(heading);
-    let (inp, _) = many0(block_content).parse(inp)?;
-    Ok((inp, RawDataBlock { heading }))
+    let (inp, content) = many0(block_content).parse(inp)?;
+    Ok((inp, RawDataBlock { heading, content }))
 }
 fn file_heading(input: &str) -> IResult<&str, &str> {
     let (inp, _) = opt(char('\u{FEFF}')).parse(input)?;
