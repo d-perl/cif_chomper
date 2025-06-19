@@ -1,6 +1,7 @@
-use log::LevelFilter;
+use log::{LevelFilter, debug};
 use std::{error::Error as StdError, fs};
 mod logging;
+mod model;
 mod parser;
 
 fn main() -> Result<(), Box<dyn StdError>> {
@@ -17,6 +18,6 @@ fn main() -> Result<(), Box<dyn StdError>> {
     let text = fs::read_to_string(&args[1])?;
     let orig_length = text.len();
     let parse = parser::cif2_file(text.as_str()).unwrap();
-
+    dbg!(parse);
     Ok(())
 }
