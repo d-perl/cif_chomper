@@ -16,7 +16,13 @@ pub struct RawDataBlock<'a> {
 #[derive(Debug)]
 
 pub enum RawDataItem<'a> {
-    SaveFrame(&'a str),
-    Data { name: &'a str, value: &'a str },
-    Loop(&'a str),
+    SaveFrame(Vec<RawDataItem<'a>>),
+    Data {
+        name: &'a str,
+        value: &'a str,
+    },
+    Loop {
+        names: Vec<&'a str>,
+        values: Vec<&'a str>,
+    },
 }

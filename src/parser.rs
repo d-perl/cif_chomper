@@ -107,14 +107,12 @@ fn single_squote_string(input: &str) -> IResult<&str, &str> {
     let (inp, _) = char('\'')(input)?;
     let (inp, value) = take_while1(|c| c != '\'').parse(inp)?;
     let (inp, _) = char('\'')(inp)?;
-    dbg!(value);
     Ok((inp, value))
 }
 fn single_dquote_string(input: &str) -> IResult<&str, &str> {
     let (inp, _) = char('"')(input)?;
     let (inp, value) = take_while1(|c| c != '"').parse(inp)?;
     let (inp, _) = char('"')(inp)?;
-    dbg!(("single_dquote_string", value));
     Ok((inp, value))
 }
 fn single_quoted_string(input: &str) -> IResult<&str, &str> {
@@ -145,7 +143,6 @@ fn wsdelim_string_sol(input: &str) -> IResult<&str, &str> {
 fn data_name(input: &str) -> IResult<&str, &str> {
     peek(char('_')).parse(input)?;
     let (inp, name) = non_blank_chars(input)?;
-    dbg!(name);
     Ok((inp, name))
 }
 fn list_values_start(input: &str) -> IResult<&str, &str> {
@@ -220,8 +217,7 @@ fn data_loop(input: &str) -> IResult<&str, RawDataItem> {
     let (inp, names) = separated_list1(wspace, data_name).parse(inp)?;
     //TODO: n values should be multiple of labels
     let (inp, values) = many1(wspace_data_value).parse(inp)?;
-    dbg!((names, values));
-    Ok((inp, RawDataItem::Loop("loop")))
+    Ok((inp, RawDataItem::Loop { names, values }))
 }
 fn data(input: &str) -> IResult<&str, RawDataItem> {
     let data_item = |inp| {
@@ -243,11 +239,11 @@ fn save_heading(input: &str) -> IResult<&str, &str> {
     container_code(inp)
 }
 fn save_frame(input: &str) -> IResult<&str, RawDataItem> {
-    let (inp, save) = save_heading(input)?;
-    let (inp, _) = many0(frame_content).parse(inp)?;
+    let (inp, _) = save_heading(input)?;
+    let (inp, data) = many0(frame_content).parse(inp)?;
     let (inp, _) = wspace(inp)?;
     let (inp, _) = save_token(inp)?;
-    Ok((inp, RawDataItem::SaveFrame(save)))
+    Ok((inp, RawDataItem::SaveFrame(data)))
 }
 fn block_content(input: &str) -> IResult<&str, RawDataItem> {
     let (inp, _) = wspace(input)?;
@@ -260,7 +256,6 @@ fn data_heading(input: &str) -> IResult<&str, &str> {
 }
 fn data_block(input: &str) -> IResult<&str, RawDataBlock> {
     let (inp, heading) = data_heading(input)?;
-    dbg!(heading);
     let (inp, content) = many0(block_content).parse(inp)?;
     Ok((inp, RawDataBlock { heading, content }))
 }
