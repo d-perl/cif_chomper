@@ -1,11 +1,11 @@
-use crate::model::{self, RawDataBlock, RawDataItem, RawModel};
+use crate::model::{RawDataBlock, RawDataItem, RawModel};
 use const_str::to_char_array;
 use nom::{
     branch::alt,
     bytes::complete::{is_not, tag, tag_no_case, take_until, take_while1},
     character::complete::{char, line_ending, not_line_ending, space0, space1},
     combinator::{eof, not, opt, peek},
-    error::{Error, ErrorKind},
+    error::Error,
     multi::{many0, many1, separated_list1},
     sequence::terminated,
     IResult, Parser,
@@ -283,7 +283,7 @@ pub fn cif2_file(input: &str) -> Result<RawModel, &str> {
 }
 
 mod tests {
-    use super::*;
+    
     use rstest::rstest;
 
     #[rstest]

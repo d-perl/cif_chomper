@@ -1,0 +1,3 @@
+[submodule "src/dict"]
+	path = src/dict
+	url = https://github.com/COMCIFS/cif_core.git

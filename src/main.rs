@@ -1,4 +1,4 @@
-use log::{LevelFilter, debug};
+use log::LevelFilter;
 use std::{error::Error as StdError, fs};
 mod logging;
 mod model;
