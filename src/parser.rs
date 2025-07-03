@@ -1,6 +1,7 @@
-use crate::model::{RawDataBlock, RawDataItem, RawModel};
+use crate::model::{RawDataBlock, RawDataItem, RawDataItemContent, RawModel};
 use const_str::to_char_array;
 use nom::{
+    IResult, Parser,
     branch::alt,
     bytes::complete::{is_not, tag, tag_no_case, take_until, take_while1},
     character::complete::{char, line_ending, not_line_ending, space0, space1},
@@ -8,7 +9,6 @@ use nom::{
     error::Error,
     multi::{many0, many1, separated_list1},
     sequence::terminated,
-    IResult, Parser,
 };
 
 const NON_BLANK: &str = " \t\r\n";
@@ -80,7 +80,8 @@ fn non_blank_chars(input: &str) -> IResult<&str, &str> {
 fn text_content(input: &str) -> IResult<&str, &str> {
     alt((take_until("\n;"), take_until("\r\n;"), take_until("\r;"))).parse(input)
 }
-fn text_field(input: &str) -> IResult<&str, &str> {
+fn text_field(input: &str) -> IResult<&str, RawDataItem> {
+    let (inp, _) = text_delim(input)?;
     text_delim(text_content(text_delim(input)?.0)?.0)
 }
 
@@ -94,28 +95,34 @@ res_word_nocase!(stop_token, "stop_");
 res_word!(quote_3_delim, "\"\"\"");
 res_word!(apostrophe_3_delim, "'''");
 
-fn triple_dquote_string(input: &str) -> IResult<&str, &str> {
-    quote_3_delim(take_until("\"\"\"")(quote_3_delim(input)?.0)?.0)
+fn triple_dquote_string(input: &str) -> IResult<&str, RawDataItemContent> {
+    let (inp, _) = quote_3_delim(input)?;
+    let (inp, value) = take_until("\"\"\"").parse(inp)?;
+    let (inp, _) = quote_3_delim(inp)?;
+    Ok((inp, RawDataItemContent::Str(value)))
 }
-fn triple_apo_string(input: &str) -> IResult<&str, &str> {
-    apostrophe_3_delim(take_until("'''")(apostrophe_3_delim(input)?.0)?.0)
+fn triple_apo_string(input: &str) -> IResult<&str, RawDataItemContent> {
+    let (inp, _) = apostrophe_3_delim(input)?;
+    let (inp, value) = take_until("'''").parse(inp)?;
+    let (inp, _) = apostrophe_3_delim(inp)?;
+    Ok((inp, RawDataItemContent::Str(value)))
 }
-fn triple_quoted_string(input: &str) -> IResult<&str, &str> {
+fn triple_quoted_string(input: &str) -> IResult<&str, RawDataItemContent> {
     alt((triple_dquote_string, triple_apo_string)).parse(input)
 }
-fn single_squote_string(input: &str) -> IResult<&str, &str> {
+fn single_squote_string(input: &str) -> IResult<&str, RawDataItemContent> {
     let (inp, _) = char('\'')(input)?;
     let (inp, value) = take_while1(|c| c != '\'').parse(inp)?;
     let (inp, _) = char('\'')(inp)?;
-    Ok((inp, value))
+    Ok((inp, RawDataItemContent::Str(value)))
 }
-fn single_dquote_string(input: &str) -> IResult<&str, &str> {
+fn single_dquote_string(input: &str) -> IResult<&str, RawDataItemContent> {
     let (inp, _) = char('"')(input)?;
     let (inp, value) = take_while1(|c| c != '"').parse(inp)?;
     let (inp, _) = char('"')(inp)?;
-    Ok((inp, value))
+    Ok((inp, RawDataItemContent::Str(value)))
 }
-fn single_quoted_string(input: &str) -> IResult<&str, &str> {
+fn single_quoted_string(input: &str) -> IResult<&str, RawDataItemContent> {
     alt((single_dquote_string, single_squote_string)).parse(input)
 }
 fn not_token(input: &str) -> IResult<&str, ()> {
@@ -162,15 +169,15 @@ fn list_values_start(input: &str) -> IResult<&str, &str> {
     };
     alt((p1, p2, p3, p4)).parse(input)
 }
-fn list(input: &str) -> IResult<&str, &str> {
+fn list(input: &str) -> IResult<&str, RawDataItemContent> {
     let (inp, _) = char('[')(input)?;
     let (inp, _) = opt(list_values_start).parse(inp)?;
-    let (inp, _) = many0(wspace_data_value).parse(inp)?;
+    let (inp, values) = many0(wspace_data_value).parse(inp)?;
     let (inp, _) = wspace_any(space0(inp)?.0)?;
     let (inp, _) = char(']')(inp)?;
-    Ok((inp, ""))
+    Ok((inp, RawDataItemContent::List(values)))
 }
-fn table(input: &str) -> IResult<&str, &str> {
+fn table(input: &str) -> IResult<&str, RawDataItemContent> {
     let wspace_tentry = |inp| table_entry(space0(inp)?.0);
     // TODO: replace with separated_list (0)
     let (inp, _) = char('{')(input)?;
@@ -178,45 +185,51 @@ fn table(input: &str) -> IResult<&str, &str> {
     let (inp, entry_1) = opt(table_entry).parse(inp)?;
     if entry_1.is_none() {
         let (inp, _) = char('}')(inp)?;
-        return Ok((inp, ""));
+        return Ok((inp, RawDataItemContent::Table(Vec::new())));
     }
     let (inp, entries) = many0(wspace_tentry).parse(inp)?;
     let (inp, _) = space0(inp)?;
     let (inp, _) = char('}')(inp)?;
-    Ok((inp, ""))
+    Ok((inp, RawDataItemContent::Table(entries)))
 }
-fn nospace_value(input: &str) -> IResult<&str, &str> {
+fn nospace_value(input: &str) -> IResult<&str, RawDataItemContent> {
     alt((single_quoted_string, triple_quoted_string, list, table)).parse(input)
 }
-fn wspace_dv_1(input: &str) -> IResult<&str, &str> {
+fn wspace_dv_1(input: &str) -> IResult<&str, RawDataItemContent> {
     nospace_value(wspace(input)?.0)
 }
-fn wspace_dv_2(input: &str) -> IResult<&str, &str> {
+fn wspace_dv_2(input: &str) -> IResult<&str, RawDataItemContent> {
     let (inp, _) = opt(wspace_lines).parse(input)?;
     let (inp, _) = space1(inp)?;
-    wsdelim_string(inp)
+    let (inp, value) = wsdelim_string(inp)?;
+    Ok((inp, RawDataItemContent::Str(value)))
 }
-fn wspace_dv_3(input: &str) -> IResult<&str, &str> {
-    wsdelim_string_sol(wspace_lines(input)?.0)
+fn wspace_dv_3(input: &str) -> IResult<&str, RawDataItemContent> {
+    let (inp, value) = wsdelim_string_sol(wspace_lines(input)?.0)?;
+    Ok((inp, RawDataItemContent::Str(value)))
 }
-fn wspace_dv_4(input: &str) -> IResult<&str, &str> {
-    text_field(opt(comment).parse(opt(space0).parse(input)?.0)?.0)
+fn wspace_dv_4(input: &str) -> IResult<&str, RawDataItemContent> {
+    let (inp, value) = text_field(opt(comment).parse(opt(space0).parse(input)?.0)?.0)?;
+    Ok((inp, RawDataItemContent::Str(value)))
 }
-fn wspace_data_value(input: &str) -> IResult<&str, &str> {
+fn wspace_data_value(input: &str) -> IResult<&str, RawDataItemContent> {
     alt((wspace_dv_1, wspace_dv_2, wspace_dv_3, wspace_dv_4)).parse(input)
 }
-fn table_entry(input: &str) -> IResult<&str, &str> {
+fn table_entry(input: &str) -> IResult<&str, (&str, &str)> {
     let (inp, key) = alt((single_quoted_string, triple_quoted_string)).parse(input)?;
     let (inp, _) = char(':')(inp)?;
     let (inp, value) = alt((nospace_value, wsdelim_string, wspace_data_value)).parse(inp)?;
-    Ok((inp, ""))
+    Ok((inp, (key, value)))
 }
 fn data_loop(input: &str) -> IResult<&str, RawDataItem> {
     let (inp, _) = loop_token(input)?;
     let (inp, _) = wspace(inp)?;
     let (inp, names) = separated_list1(wspace, data_name).parse(inp)?;
-    //TODO: n values should be multiple of labels
     let (inp, values) = many1(wspace_data_value).parse(inp)?;
+    //TODO: n values should be multiple of labels
+    // if values.len() % names.len() != 0 {
+    //     Err...
+    // }
     Ok((inp, RawDataItem::Loop { names, values }))
 }
 fn data(input: &str) -> IResult<&str, RawDataItem> {
@@ -283,7 +296,7 @@ pub fn cif2_file(input: &str) -> Result<RawModel, &str> {
 }
 
 mod tests {
-    
+
     use rstest::rstest;
 
     #[rstest]
@@ -320,8 +333,8 @@ mod tests {
     #[case(nospace_value, "'Lebedev, O. I.'\n", "Lebedev, O. I.", true)]
     #[case(single_quoted_string, "'Lebedev, O. I.'\n", "Lebedev, O. I.", true)]
     /* #[case(
-            data_loop,
-            "loop_
+        data_loop,
+        "loop_
     _symmetry_equiv_pos_as_xyz
     x,y,z
     x,-y+1/4,-z+1/4
@@ -332,9 +345,9 @@ mod tests {
     x+3/4,-z+1/2,y+1/4
     loop_
     _atom_site_label,",
-            "",
-            true
-        )] */
+        "",
+        true
+    )] */
     fn test_parser_components(
         #[case] func: fn(&str) -> IResult<&str, &str>,
         #[case] input: &str,

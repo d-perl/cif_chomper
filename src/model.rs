@@ -15,6 +15,14 @@ pub struct RawDataBlock<'a> {
 
 #[derive(Debug)]
 
+pub enum RawDataItemContent<'a> {
+    Str(&'a str),
+    List(Vec<&'a str>),
+    Table(Vec<(&'a str, &'a str)>),
+}
+
+#[derive(Debug)]
+
 pub enum RawDataItem<'a> {
     SaveFrame(Vec<RawDataItem<'a>>),
     Data {
