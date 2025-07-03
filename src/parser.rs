@@ -80,9 +80,11 @@ fn non_blank_chars(input: &str) -> IResult<&str, &str> {
 fn text_content(input: &str) -> IResult<&str, &str> {
     alt((take_until("\n;"), take_until("\r\n;"), take_until("\r;"))).parse(input)
 }
-fn text_field(input: &str) -> IResult<&str, RawDataItem> {
+fn text_field(input: &str) -> IResult<&str, RawDataItemContent> {
     let (inp, _) = text_delim(input)?;
-    text_delim(text_content(text_delim(input)?.0)?.0)
+    let (inp, value) = text_content(inp)?;
+    let (inp, _) = text_delim(inp)?;
+    Ok((inp, RawDataItemContent::Str(value)))
 }
 
 res_word!(magic_code, r"#\#CIF_2.0");
@@ -132,19 +134,22 @@ fn not_token(input: &str) -> IResult<&str, ()> {
     not(global_token).parse(input)?;
     not(stop_token).parse(input)
 }
-fn wsdelim_string(input: &str) -> IResult<&str, &str> {
+fn wsdelim_string(input: &str) -> IResult<&str, RawDataItemContent> {
     not_token(input)?;
     peek(is_not(LEAD)).parse(input)?;
-    take_while1(restrict_char).parse(input)
+    let (inp, value) = take_while1(restrict_char).parse(input)?;
+    Ok((inp, RawDataItemContent::Str(value)))
 }
-fn wsdelim_string_sol(input: &str) -> IResult<&str, &str> {
+fn wsdelim_string_sol(input: &str) -> IResult<&str, RawDataItemContent> {
     not_token(input)?;
     peek(is_not(LEAD)).parse(input)?;
     if peek(char::<&str, Error<&str>>(';')).parse(input).is_ok() {
         let (inp, _) = char(';')(input)?;
-        space1(inp)
+        let (inp, _) = space1(inp)?;
+        Ok((inp, RawDataItemContent::Empty))
     } else {
-        take_while1(restrict_char).parse(input)
+        let (inp, value) = take_while1(restrict_char).parse(input)?;
+        Ok((inp, RawDataItemContent::Str(value)))
     }
 }
 fn data_name(input: &str) -> IResult<&str, &str> {
@@ -152,7 +157,7 @@ fn data_name(input: &str) -> IResult<&str, &str> {
     let (inp, name) = non_blank_chars(input)?;
     Ok((inp, name))
 }
-fn list_values_start(input: &str) -> IResult<&str, &str> {
+fn list_values_start(input: &str) -> IResult<&str, RawDataItemContent> {
     let p1 = |inp| nospace_value(wspace_any(inp)?.0);
     let p2 = |inp| {
         let (inp_, _) = wspace_any(inp)?;
@@ -210,7 +215,7 @@ fn wspace_dv_3(input: &str) -> IResult<&str, RawDataItemContent> {
 }
 fn wspace_dv_4(input: &str) -> IResult<&str, RawDataItemContent> {
     let (inp, value) = text_field(opt(comment).parse(opt(space0).parse(input)?.0)?.0)?;
-    Ok((inp, RawDataItemContent::Str(value)))
+    Ok((inp, value))
 }
 fn wspace_data_value(input: &str) -> IResult<&str, RawDataItemContent> {
     alt((wspace_dv_1, wspace_dv_2, wspace_dv_3, wspace_dv_4)).parse(input)

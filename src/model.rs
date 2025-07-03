@@ -16,6 +16,7 @@ pub struct RawDataBlock<'a> {
 #[derive(Debug)]
 
 pub enum RawDataItemContent<'a> {
+    Empty,
     Str(&'a str),
     List(Vec<&'a str>),
     Table(Vec<(&'a str, &'a str)>),
