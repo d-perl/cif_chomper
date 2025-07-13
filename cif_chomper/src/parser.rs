@@ -1,4 +1,4 @@
-use crate::model::{self, RawDataBlock, RawDataItem, RawModel};
+use crate::model::{RawDataBlock, RawDataItem, RawModel};
 use const_str::to_char_array;
 use nom::{
     IResult, Parser,
@@ -6,7 +6,7 @@ use nom::{
     bytes::complete::{is_not, tag, tag_no_case, take_until, take_while1},
     character::complete::{char, line_ending, not_line_ending, space0, space1},
     combinator::{eof, not, opt, peek},
-    error::{Error, ErrorKind},
+    error::Error,
     multi::{many0, many1, separated_list1},
     sequence::terminated,
 };
@@ -81,7 +81,10 @@ fn text_content(input: &str) -> IResult<&str, &str> {
     alt((take_until("\n;"), take_until("\r\n;"), take_until("\r;"))).parse(input)
 }
 fn text_field(input: &str) -> IResult<&str, &str> {
-    text_delim(text_content(text_delim(input)?.0)?.0)
+    let (inp, _) = text_delim(input)?;
+    let (inp, txt) = text_content(inp)?;
+    let (inp, _) = text_delim(inp)?;
+    Ok((inp, txt))
 }
 
 res_word!(magic_code, r"#\#CIF_2.0");
@@ -95,10 +98,16 @@ res_word!(quote_3_delim, "\"\"\"");
 res_word!(apostrophe_3_delim, "'''");
 
 fn triple_dquote_string(input: &str) -> IResult<&str, &str> {
-    quote_3_delim(take_until("\"\"\"")(quote_3_delim(input)?.0)?.0)
+    let (inp, _) = quote_3_delim(input)?;
+    let (inp, txt) = take_until("\"\"\"")(inp)?;
+    let (inp, _) = quote_3_delim(inp)?;
+    Ok((inp, txt))
 }
 fn triple_apo_string(input: &str) -> IResult<&str, &str> {
-    apostrophe_3_delim(take_until("'''")(apostrophe_3_delim(input)?.0)?.0)
+    let (inp, _) = apostrophe_3_delim(input)?;
+    let (inp, txt) = take_until("'''")(inp)?;
+    let (inp, _) = apostrophe_3_delim(inp)?;
+    Ok((inp, txt))
 }
 fn triple_quoted_string(input: &str) -> IResult<&str, &str> {
     alt((triple_dquote_string, triple_apo_string)).parse(input)
@@ -209,7 +218,7 @@ fn table_entry(input: &str) -> IResult<&str, &str> {
     let (inp, key) = alt((single_quoted_string, triple_quoted_string)).parse(input)?;
     let (inp, _) = char(':')(inp)?;
     let (inp, value) = alt((nospace_value, wsdelim_string, wspace_data_value)).parse(inp)?;
-    Ok((inp, ""))
+    Ok((inp, "table entry"))
 }
 fn data_loop(input: &str) -> IResult<&str, RawDataItem> {
     let (inp, _) = loop_token(input)?;
@@ -319,22 +328,6 @@ mod tests {
     #[case(data_name, "cif_field_item qwe rty", "", false)]
     #[case(nospace_value, "'Lebedev, O. I.'\n", "Lebedev, O. I.", true)]
     #[case(single_quoted_string, "'Lebedev, O. I.'\n", "Lebedev, O. I.", true)]
-    #[case(
-        data_loop,
-        "loop_
-_symmetry_equiv_pos_as_xyz
-x,y,z
-x,-y+1/4,-z+1/4
--x+1/4,y,-z+1/4
--x,-z+1/2,-y+1/2
--x,z+1/4,y+1/4
-x+3/4,z+1/4,-y+1/2
-x+3/4,-z+1/2,y+1/4
-loop_
-_atom_site_label,",
-        "",
-        true
-    )]
     fn test_parser_components(
         #[case] func: fn(&str) -> IResult<&str, &str>,
         #[case] input: &str,
@@ -348,6 +341,38 @@ _atom_site_label,",
             let res = test.unwrap();
             println!("e: {:?} - f: {:?}", expected, res);
             assert!(res.0 == expected || res.1 == expected)
+        } else {
+            assert!(test.is_err())
+        }
+    }
+
+    #[rstest]
+    #[case(
+        "loop_
+_symmetry_equiv_pos_as_xyz
+x,y,z
+x,-y+1/4,-z+1/4
+-x+1/4,y,-z+1/4
+-x,-z+1/2,-y+1/2
+-x,z+1/4,y+1/4
+x+3/4,z+1/4,-y+1/2
+x+3/4,-z+1/2,y+1/4
+loop_
+_atom_site_label,",
+        RawDataItem::Loop{ 
+            names: vec!["_symmetry_equiv_pos_as_xyz"], 
+            values: vec!["x,y,z","x,-y+1/4,-z+1/4","-x+1/4,y,-z+1/4","-x,-z+1/2,-y+1/2","-x,z+1/4,y+1/4","x+3/4,z+1/4,-y+1/2","x+3/4,-z+1/2,y+1/4",]
+        },
+        true
+    )]
+    fn test_parser_loop(#[case] input: &str, #[case] expected: RawDataItem, #[case] good: bool) {
+        let test = data_loop(input);
+        dbg!(&test);
+        if good {
+            assert!(test.is_ok());
+            let res = test.unwrap();
+            println!("e: {:?} - f: {:?}", expected, res);
+            assert!(res.1 == expected)
         } else {
             assert!(test.is_err())
         }

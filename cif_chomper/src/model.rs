@@ -1,19 +1,19 @@
 /// Corresponds to the hierarchy expressed by the CIF 2.0 syntax, without
 /// any parsing of data
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct RawModel<'a> {
     pub heading: &'a str,
     pub content: Vec<RawDataBlock<'a>>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 
 pub struct RawDataBlock<'a> {
     pub heading: &'a str,
     pub content: Vec<RawDataItem<'a>>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 
 pub enum RawDataItem<'a> {
     SaveFrame(Vec<RawDataItem<'a>>),
