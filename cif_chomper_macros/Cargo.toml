@@ -3,3 +3,5 @@ name = "cif_chomper_macros"
 version = "0.1.0"
 edition = "2024"
 
+[dependencies]
+cif_chomper = {path = "../cif_chomper"}

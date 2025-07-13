@@ -9,4 +9,3 @@ env = "1.0.1"
 log = "0.4.27"
 nom = "8.0.0"
 rstest = "0.25.0"
-cif_chomper_macros = {path = "../cif_chomper_macros"}
