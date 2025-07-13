@@ -301,7 +301,7 @@ pub fn cif2_file(input: &str) -> Result<RawModel, &str> {
 }
 
 mod tests {
-
+    use super::*;
     use rstest::rstest;
 
     #[rstest]
@@ -337,22 +337,6 @@ mod tests {
     #[case(data_name, "cif_field_item qwe rty", "", false)]
     #[case(nospace_value, "'Lebedev, O. I.'\n", "Lebedev, O. I.", true)]
     #[case(single_quoted_string, "'Lebedev, O. I.'\n", "Lebedev, O. I.", true)]
-    /* #[case(
-        data_loop,
-        "loop_
-    _symmetry_equiv_pos_as_xyz
-    x,y,z
-    x,-y+1/4,-z+1/4
-    -x+1/4,y,-z+1/4
-    -x,-z+1/2,-y+1/2
-    -x,z+1/4,y+1/4
-    x+3/4,z+1/4,-y+1/2
-    x+3/4,-z+1/2,y+1/4
-    loop_
-    _atom_site_label,",
-        "",
-        true
-    )] */
     fn test_parser_components(
         #[case] func: fn(&str) -> IResult<&str, &str>,
         #[case] input: &str,
@@ -366,6 +350,38 @@ mod tests {
             let res = test.unwrap();
             println!("e: {:?} - f: {:?}", expected, res);
             assert!(res.0 == expected || res.1 == expected)
+        } else {
+            assert!(test.is_err())
+        }
+    }
+
+    #[rstest]
+    #[case(
+        "loop_
+_symmetry_equiv_pos_as_xyz
+x,y,z
+x,-y+1/4,-z+1/4
+-x+1/4,y,-z+1/4
+-x,-z+1/2,-y+1/2
+-x,z+1/4,y+1/4
+x+3/4,z+1/4,-y+1/2
+x+3/4,-z+1/2,y+1/4
+loop_
+_atom_site_label,",
+        RawDataItem::Loop{ 
+            names: vec!["_symmetry_equiv_pos_as_xyz"], 
+            values: vec!["x,y,z","x,-y+1/4,-z+1/4","-x+1/4,y,-z+1/4","-x,-z+1/2,-y+1/2","-x,z+1/4,y+1/4","x+3/4,z+1/4,-y+1/2","x+3/4,-z+1/2,y+1/4",]
+        },
+        true
+    )]
+    fn test_parser_loop(#[case] input: &str, #[case] expected: RawDataItem, #[case] good: bool) {
+        let test = data_loop(input);
+        dbg!(&test);
+        if good {
+            assert!(test.is_ok());
+            let res = test.unwrap();
+            println!("e: {:?} - f: {:?}", expected, res);
+            assert!(res.1 == expected)
         } else {
             assert!(test.is_err())
         }
