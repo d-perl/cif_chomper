@@ -1,3 +1,6 @@
+[lib]
+proc-macro = true
+
 [package]
 name = "cif_chomper_macros"
 version = "0.1.0"

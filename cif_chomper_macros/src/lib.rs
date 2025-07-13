@@ -3,11 +3,10 @@ use cif_chomper_core::parser::cif2_file;
 use syn::parse::{Parse, ParseStream};
 use syn::{Expr, Pat};
 
-// make struct out of given text
-struct Creator(Pat);
+extern crate proc_macro;
+use proc_macro::TokenStream;
 
-impl Parse for Creator {
-    fn parse(input: ParseStream) -> syn::Result<Self> {
-        todo!()
-    }
+#[proc_macro]
+pub fn make_answer(_item: TokenStream) -> TokenStream {
+    "fn answer() -> u32 { 42 }".parse().unwrap()
 }
