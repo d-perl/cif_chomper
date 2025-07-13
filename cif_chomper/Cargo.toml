@@ -1,8 +1,8 @@
 [package]
-name = "cif_chomper_macros"
+name = "cif_chomper"
 version = "0.1.0"
 edition = "2024"
 
 [dependencies]
 cif_chomper_core = {path = "../cif_chomper_core"}
-syn = {version = "2.0.104", features = ["full"]}
+cif_chomper_macros = {path = "../cif_chomper_macros"}

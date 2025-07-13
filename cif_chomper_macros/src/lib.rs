@@ -1,14 +1,13 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
-}
+use cif_chomper_core::model::{RawDataBlock, RawDataItem, RawModel};
+use cif_chomper_core::parser::cif2_file;
+use syn::parse::{Parse, ParseStream};
+use syn::{Expr, Pat};
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+// make struct out of given text
+struct Creator(Pat);
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
+impl Parse for Creator {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        todo!()
     }
 }
