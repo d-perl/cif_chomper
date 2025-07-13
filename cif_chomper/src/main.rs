@@ -1,8 +1,6 @@
-use log::{LevelFilter, debug};
-use std::{error::Error as StdError, fs};
-mod logging;
-mod model;
-mod parser;
+use cif_chomper_core::{logging, parser};
+use log::LevelFilter;
+use std::{env, error::Error as StdError, fs};
 
 fn main() -> Result<(), Box<dyn StdError>> {
     log::set_logger(&logging::LOGGER)
@@ -16,7 +14,6 @@ fn main() -> Result<(), Box<dyn StdError>> {
         return Ok(());
     }
     let text = fs::read_to_string(&args[1])?;
-    let orig_length = text.len();
     let parse = parser::cif2_file(text.as_str()).unwrap();
     dbg!(parse);
     Ok(())

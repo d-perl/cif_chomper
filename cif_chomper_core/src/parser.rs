@@ -20,12 +20,7 @@ fn restrict_char(c: char) -> bool {
     non_blank(c) && !const { to_char_array!(RESTRICT) }.contains(&c)
 }
 static LEAD: &str = " \t\r\n[]{}\"#$\\_";
-fn lead_char(c: char) -> bool {
-    restrict_char(c) && !const { to_char_array!(LEAD) }.contains(&c)
-}
-fn not_quote(c: char) -> bool {
-    c != '"'
-}
+
 
 macro_rules! reserved_word {
     ($n:ident, $tag:literal, $fun:ident, $a:ident, $t:ty) => {

@@ -18,6 +18,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9555578bc9e57714c812a1f84e4fc5b4d21fcb063490c624de019f7464c91268"
 
 [[package]]
+name = "cif_chomper"
+version = "0.1.0"
+dependencies = [
+ "cif_chomper_core",
+ "cif_chomper_macros",
+ "log",
+]
+
+[[package]]
 name = "cif_chomper_core"
 version = "0.1.0"
 dependencies = [

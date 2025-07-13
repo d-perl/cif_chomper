@@ -4,5 +4,6 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+log = {workspace = true}
 cif_chomper_core = {path = "../cif_chomper_core"}
 cif_chomper_macros = {path = "../cif_chomper_macros"}

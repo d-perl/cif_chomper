@@ -1,0 +1,3 @@
+[submodule "cif_core"]
+	path = cif_core
+	url = https://github.com/COMCIFS/cif_core.git
