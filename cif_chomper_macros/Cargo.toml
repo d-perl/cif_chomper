@@ -1,5 +1,6 @@
 [lib]
 proc-macro = true
+crate-type = ["proc-macro"]
 
 [package]
 name = "cif_chomper_macros"

@@ -1,7 +1,11 @@
+[lib]
+crate-type = ["cdylib","lib"]
+
 [package]
 name = "cif_chomper_core"
 version = "0.1.0"
 edition = "2024"
+
 
 [dependencies]
 log = {workspace = true}
