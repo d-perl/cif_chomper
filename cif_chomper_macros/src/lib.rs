@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 use std::cell::LazyCell;
 
 use cif_chomper_core::model::{RawDataBlock, RawDataItem, RawModel};
@@ -17,18 +16,10 @@ pub fn make_model(_item: TokenStream) -> TokenStream {
     "fn answer() -> u32 { 42 }".parse().unwrap()
 }
 
-=======
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
-}
-
-#[cfg(test)]
->>>>>>> main
 mod tests {
     use super::*;
 
     #[test]
-<<<<<<< HEAD
     fn test_load_ddl_str() {
         assert!(DDL.len() > 100);
     }
@@ -42,10 +33,4 @@ mod tests {
 
     #[test]
     fn test_ddl_model_content() {}
-=======
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
->>>>>>> main
 }

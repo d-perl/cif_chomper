@@ -1,14 +1,6 @@
-<<<<<<< HEAD
 use cif_chomper_core::{logging, parser};
 use log::LevelFilter;
 use std::{env, error::Error as StdError, fs};
-=======
-use log::LevelFilter;
-use std::{error::Error as StdError, fs};
-mod logging;
-mod model;
-mod parser;
->>>>>>> main
 
 fn main() -> Result<(), Box<dyn StdError>> {
     log::set_logger(&logging::LOGGER)
