@@ -42,6 +42,15 @@ name = "cif_chomper_macros"
 version = "0.1.0"
 dependencies = [
  "cif_chomper_core",
+ "cif_chomper_macros_core",
+ "syn",
+]
+
+[[package]]
+name = "cif_chomper_macros_core"
+version = "0.1.0"
+dependencies = [
+ "cif_chomper_core",
  "proc-macro2",
  "quote",
  "syn",

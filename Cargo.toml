@@ -1,6 +1,7 @@
 [workspace]
 resolver = "3"
-members = ["cif_chomper_core", "cif_chomper_macros","cif_chomper"]
+members = ["cif_chomper_core", "cif_chomper_macros", "cif_chomper", "cif_chomper_macros_core"]
 
 [workspace.dependencies]
 log = "0.4.27"
+syn = {version = "2.0.104", features = ["full"]}
