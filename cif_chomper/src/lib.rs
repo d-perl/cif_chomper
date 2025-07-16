@@ -1,14 +1,12 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
-}
+use cif_chomper_macros::make_model;
 
 #[cfg(test)]
-mod tests {
+mod macro_tests {
     use super::*;
 
     #[test]
     fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
+        make_model!("test");
+        assert_eq!(answer(), 42);
     }
 }
