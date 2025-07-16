@@ -1,12 +1,18 @@
+<<<<<<< HEAD
 [lib]
 proc-macro = true
 crate-type = ["proc-macro"]
 
+=======
+>>>>>>> main
 [package]
 name = "cif_chomper_macros"
 version = "0.1.0"
 edition = "2024"
 
+<<<<<<< HEAD
 [dependencies]
 cif_chomper_core = {path = "../cif_chomper_core"}
 syn = {version = "2.0.104", features = ["full"]}
+=======
+>>>>>>> main
