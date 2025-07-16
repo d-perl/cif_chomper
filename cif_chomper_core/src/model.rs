@@ -14,27 +14,22 @@ pub struct RawDataBlock<'a> {
 }
 
 #[derive(Debug, PartialEq)]
-<<<<<<<< HEAD:cif_chomper_core/src/model.rs
-========
-
 pub enum RawDataItemContent<'a> {
     Empty,
     Str(&'a str),
-    List(Vec<&'a str>),
-    Table(Vec<(&'a str, &'a str)>),
+    List(Vec<RawDataItemContent<'a>>),
+    Table(Vec<(RawDataItemContent<'a>, RawDataItemContent<'a>)>),
 }
 
-#[derive(Debug)]
->>>>>>>> main:cif_chomper/src/model.rs
-
+#[derive(Debug, PartialEq)]
 pub enum RawDataItem<'a> {
     SaveFrame(Vec<RawDataItem<'a>>),
     Data {
         name: &'a str,
-        value: &'a str,
+        value: RawDataItemContent<'a>,
     },
     Loop {
         names: Vec<&'a str>,
-        values: Vec<&'a str>,
+        values: Vec<RawDataItemContent<'a>>,
     },
 }

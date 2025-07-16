@@ -1,8 +1,4 @@
-<<<<<<<< HEAD:cif_chomper_core/src/parser.rs
-use crate::model::{RawDataBlock, RawDataItem, RawModel};
-========
 use crate::model::{RawDataBlock, RawDataItem, RawDataItemContent, RawModel};
->>>>>>>> main:cif_chomper/src/parser.rs
 use const_str::to_char_array;
 use nom::{
     IResult, Parser,
@@ -79,19 +75,11 @@ fn non_blank_chars(input: &str) -> IResult<&str, &str> {
 fn text_content(input: &str) -> IResult<&str, &str> {
     alt((take_until("\n;"), take_until("\r\n;"), take_until("\r;"))).parse(input)
 }
-<<<<<<<< HEAD:cif_chomper_core/src/parser.rs
-fn text_field(input: &str) -> IResult<&str, &str> {
-    let (inp, _) = text_delim(input)?;
-    let (inp, txt) = text_content(inp)?;
-    let (inp, _) = text_delim(inp)?;
-    Ok((inp, txt))
-========
 fn text_field(input: &str) -> IResult<&str, RawDataItemContent> {
     let (inp, _) = text_delim(input)?;
     let (inp, value) = text_content(inp)?;
     let (inp, _) = text_delim(inp)?;
     Ok((inp, RawDataItemContent::Str(value)))
->>>>>>>> main:cif_chomper/src/parser.rs
 }
 
 res_word!(magic_code, r"#\#CIF_2.0");
@@ -104,19 +92,7 @@ res_word_nocase!(stop_token, "stop_");
 res_word!(quote_3_delim, "\"\"\"");
 res_word!(apostrophe_3_delim, "'''");
 
-<<<<<<<< HEAD:cif_chomper_core/src/parser.rs
-fn triple_dquote_string(input: &str) -> IResult<&str, &str> {
-    let (inp, _) = quote_3_delim(input)?;
-    let (inp, txt) = take_until("\"\"\"")(inp)?;
-    let (inp, _) = quote_3_delim(inp)?;
-    Ok((inp, txt))
-}
-fn triple_apo_string(input: &str) -> IResult<&str, &str> {
-    let (inp, _) = apostrophe_3_delim(input)?;
-    let (inp, txt) = take_until("'''")(inp)?;
-    let (inp, _) = apostrophe_3_delim(inp)?;
-    Ok((inp, txt))
-========
+
 fn triple_dquote_string(input: &str) -> IResult<&str, RawDataItemContent> {
     let (inp, _) = quote_3_delim(input)?;
     let (inp, value) = take_until("\"\"\"").parse(inp)?;
@@ -128,7 +104,6 @@ fn triple_apo_string(input: &str) -> IResult<&str, RawDataItemContent> {
     let (inp, value) = take_until("'''").parse(inp)?;
     let (inp, _) = apostrophe_3_delim(inp)?;
     Ok((inp, RawDataItemContent::Str(value)))
->>>>>>>> main:cif_chomper/src/parser.rs
 }
 fn triple_quoted_string(input: &str) -> IResult<&str, RawDataItemContent> {
     alt((triple_dquote_string, triple_apo_string)).parse(input)
@@ -228,11 +203,11 @@ fn wspace_dv_2(input: &str) -> IResult<&str, RawDataItemContent> {
     let (inp, _) = opt(wspace_lines).parse(input)?;
     let (inp, _) = space1(inp)?;
     let (inp, value) = wsdelim_string(inp)?;
-    Ok((inp, RawDataItemContent::Str(value)))
+    Ok((inp, value))
 }
 fn wspace_dv_3(input: &str) -> IResult<&str, RawDataItemContent> {
     let (inp, value) = wsdelim_string_sol(wspace_lines(input)?.0)?;
-    Ok((inp, RawDataItemContent::Str(value)))
+    Ok((inp, value))
 }
 fn wspace_dv_4(input: &str) -> IResult<&str, RawDataItemContent> {
     let (inp, value) = text_field(opt(comment).parse(opt(space0).parse(input)?.0)?.0)?;
@@ -241,15 +216,11 @@ fn wspace_dv_4(input: &str) -> IResult<&str, RawDataItemContent> {
 fn wspace_data_value(input: &str) -> IResult<&str, RawDataItemContent> {
     alt((wspace_dv_1, wspace_dv_2, wspace_dv_3, wspace_dv_4)).parse(input)
 }
-fn table_entry(input: &str) -> IResult<&str, (&str, &str)> {
+fn table_entry(input: &str) -> IResult<&str, (RawDataItemContent, RawDataItemContent)> {
     let (inp, key) = alt((single_quoted_string, triple_quoted_string)).parse(input)?;
     let (inp, _) = char(':')(inp)?;
     let (inp, value) = alt((nospace_value, wsdelim_string, wspace_data_value)).parse(inp)?;
-<<<<<<<< HEAD:cif_chomper_core/src/parser.rs
-    Ok((inp, "table entry"))
-========
     Ok((inp, (key, value)))
->>>>>>>> main:cif_chomper/src/parser.rs
 }
 fn data_loop(input: &str) -> IResult<&str, RawDataItem> {
     let (inp, _) = loop_token(input)?;
@@ -354,15 +325,10 @@ mod tests {
     #[case(text_delim, "\n;abc", "abc", true)]
     #[case(text_delim, "\n;abc123\nxyz987\n;abc", "abc123\nxyz987\n;abc", true)]
     #[case(text_content, "abc123\nxyz987\n;abc", "\n;abc", true)]
-    #[case(text_field, "\n;abc123\nxyz987\n;abc", "abc", true)]
-    #[case(triple_quoted_string, "\"\"\"asdf  7' \n\t \"\"\"abc", "abc", true)]
-    #[case(triple_quoted_string, "\"\"\"asdf  7' \n\t \"\"a\"abc", "", false)]
-    #[case(triple_quoted_string, "'''asdf  7' \n\t '''abc", "abc", true)]
+
     #[case(data_name, "_cif_field_item qwe rty", "_cif_field_item", true)]
     #[case(data_name, "cif_field_item qwe rty", "", false)]
-    #[case(nospace_value, "'Lebedev, O. I.'\n", "Lebedev, O. I.", true)]
-    #[case(single_quoted_string, "'Lebedev, O. I.'\n", "Lebedev, O. I.", true)]
-    fn test_parser_components(
+    fn test_parser_basic_components(
         #[case] func: fn(&str) -> IResult<&str, &str>,
         #[case] input: &str,
         #[case] expected: &str,
@@ -375,6 +341,31 @@ mod tests {
             let res = test.unwrap();
             println!("e: {:?} - f: {:?}", expected, res);
             assert!(res.0 == expected || res.1 == expected)
+        } else {
+            assert!(test.is_err())
+        }
+    }
+
+    #[rstest]
+    #[case(nospace_value, "'Lebedev, O. I.'\n", "Lebedev, O. I.", true)]
+    #[case(single_quoted_string, "'Lebedev, O. I.'\n", "Lebedev, O. I.", true)]
+    #[case(text_field, "\n;abc123\nxyz987\n;abc", "abc", true)]
+    #[case(triple_quoted_string, "\"\"\"asdf  7' \n\t \"\"\"abc", "abc", true)]
+    #[case(triple_quoted_string, "\"\"\"asdf  7' \n\t \"\"a\"abc", "", false)]
+    #[case(triple_quoted_string, "'''asdf  7' \n\t '''abc", "abc", true)]
+    fn test_parser_data_components(
+        #[case] func: fn(&str) -> IResult<&str, RawDataItemContent>,
+        #[case] input: &str,
+        #[case] expected: &str,
+        #[case] good: bool,
+    ) {
+        let test = func(input);
+        dbg!(&test);
+        if good {
+            assert!(test.is_ok());
+            let res = test.unwrap();
+            println!("e: {:?} - f: {:?}", expected, res);
+            assert!(res.0 == expected || res.1 == RawDataItemContent::Str(expected))
         } else {
             assert!(test.is_err())
         }
@@ -395,7 +386,7 @@ loop_
 _atom_site_label,",
         RawDataItem::Loop{ 
             names: vec!["_symmetry_equiv_pos_as_xyz"], 
-            values: vec!["x,y,z","x,-y+1/4,-z+1/4","-x+1/4,y,-z+1/4","-x,-z+1/2,-y+1/2","-x,z+1/4,y+1/4","x+3/4,z+1/4,-y+1/2","x+3/4,-z+1/2,y+1/4",]
+            values: vec!["x,y,z","x,-y+1/4,-z+1/4","-x+1/4,y,-z+1/4","-x,-z+1/2,-y+1/2","-x,z+1/4,y+1/4","x+3/4,z+1/4,-y+1/2","x+3/4,-z+1/2,y+1/4",].iter().map(|s| RawDataItemContent::Str(s)).collect()
         },
         true
     )]
@@ -435,7 +426,7 @@ x,-y+1/4,-z+1/4
             assert!(test.is_ok());
             let res = test.unwrap();
             println!("e: {:?} - f: {:?}", expected, res);
-            assert!(res.0 == expected || res.1 == expected)
+            assert!(res.0 == expected || res.1 == RawDataItemContent::Str(expected))
         } else {
             assert!(wspace_dv_1(input).is_err());
             assert!(wspace_dv_2(input).is_err());
