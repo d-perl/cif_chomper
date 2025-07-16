@@ -1,5 +1,5 @@
 /// Corresponds to the hierarchy expressed by the CIF 2.0 syntax, without
-/// any parsing of data
+/// any parsing or interpretation of data
 #[derive(Debug, PartialEq)]
 pub struct RawModel<'a> {
     pub heading: &'a str,
