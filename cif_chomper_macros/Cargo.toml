@@ -1,6 +1,5 @@
 [lib]
 proc-macro = true
-crate-type = ["proc-macro"]
 
 [package]
 name = "cif_chomper_macros"
@@ -9,4 +8,6 @@ edition = "2024"
 
 [dependencies]
 cif_chomper_core = {path = "../cif_chomper_core"}
+proc-macro2 = "1.0.95"
+quote = "1.0.40"
 syn = {version = "2.0.104", features = ["full"]}

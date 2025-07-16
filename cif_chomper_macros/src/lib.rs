@@ -2,18 +2,50 @@ use std::cell::LazyCell;
 
 use cif_chomper_core::model::{RawDataBlock, RawDataItem, RawModel};
 use cif_chomper_core::parser::cif2_file;
+use proc_macro2::Span;
+use quote::quote;
 use syn::parse::{Parse, ParseStream};
-use syn::{Expr, Pat};
-
+use syn::{Expr, Pat, Token, parse_macro_input};
 extern crate proc_macro;
-use proc_macro::TokenStream;
+use proc_macro::{Literal, TokenStream};
 
 const DDL: &str = include_str!("../../cif_core/ddl.dic");
 const DDL_MODEL: LazyCell<RawModel> = LazyCell::new(|| cif2_file(DDL).unwrap());
+const DICT: &str = include_str!("../../cif_core/cif_core.dic");
+const DICT_MODEL: LazyCell<RawModel> = LazyCell::new(|| cif2_file(DICT).unwrap());
+
+#[derive(Debug)]
+struct ModelMacroInput {
+    name: syn::Ident,
+}
+
+impl Parse for ModelMacroInput {
+    fn parse(input: ParseStream) -> Result<Self, syn::Error> {
+        let lookahead = input.lookahead1();
+        if lookahead.peek(syn::Ident) {
+            Ok(ModelMacroInput {
+                name: input.parse()?,
+            })
+        } else {
+            Err(lookahead.error())
+        }
+    }
+}
 
 #[proc_macro]
-pub fn make_model(_item: TokenStream) -> TokenStream {
-    "fn answer() -> u32 { 42 }".parse().unwrap()
+pub fn make_model(tokens: TokenStream) -> TokenStream {
+    dbg!(&tokens);
+    let input = parse_macro_input!(tokens as ModelMacroInput);
+    dbg!(&input);
+    let name = input.name;
+    quote! {
+        struct #name {
+            x: usize
+        }
+
+        fn answer() -> usize {42}
+    }
+    .into()
 }
 
 mod tests {
