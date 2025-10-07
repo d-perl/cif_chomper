@@ -296,8 +296,9 @@ pub fn cif2_file(input: &str) -> Result<RawModel, &str> {
     Ok(RawModel { heading, content })
 }
 
+#[cfg(test)]
 mod tests {
-    
+    use super::*;
     use rstest::rstest;
 
     #[rstest]
