@@ -61,8 +61,8 @@ pub fn make_model_core(input: ModelMacroInput) -> TokenStream {
     }
 }
 
+#[cfg(test)]
 mod tests {
-
     use super::*;
 
     #[test]

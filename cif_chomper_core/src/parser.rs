@@ -297,7 +297,7 @@ pub fn cif2_file(input: &str) -> Result<RawModel, &str> {
 }
 
 mod tests {
-    use super::*;
+    
     use rstest::rstest;
 
     #[rstest]
