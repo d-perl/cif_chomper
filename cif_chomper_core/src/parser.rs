@@ -1,4 +1,4 @@
-use crate::model::{RawDataBlock, RawDataItem, RawDataItemContent, RawModel};
+use crate::raw_model::{RawDataBlock, RawDataItem, RawDataItemContent, RawModel};
 use const_str::to_char_array;
 use nom::{
     IResult, Parser,
@@ -253,11 +253,11 @@ fn save_heading(input: &str) -> IResult<&str, &str> {
     container_code(inp)
 }
 fn save_frame(input: &str) -> IResult<&str, RawDataItem> {
-    let (inp, _) = save_heading(input)?;
-    let (inp, data) = many0(frame_content).parse(inp)?;
+    let (inp, name) = save_heading(input)?;
+    let (inp, content) = many0(frame_content).parse(inp)?;
     let (inp, _) = wspace(inp)?;
     let (inp, _) = save_token(inp)?;
-    Ok((inp, RawDataItem::SaveFrame(data)))
+    Ok((inp, RawDataItem::SaveFrame{name, content}))
 }
 fn block_content(input: &str) -> IResult<&str, RawDataItem> {
     let (inp, _) = wspace(input)?;

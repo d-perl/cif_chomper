@@ -1,4 +1,4 @@
-/// Corresponds to the hierarchy expressed by the CIF 2.0 syntax, without
+/// Corresponds to the hierarchy expressed by the CIF 2.0 / DDLm syntax, without
 /// any parsing or interpretation of data
 #[derive(Debug, PartialEq)]
 pub struct RawModel<'a> {
@@ -23,7 +23,10 @@ pub enum RawDataItemContent<'a> {
 
 #[derive(Debug, PartialEq)]
 pub enum RawDataItem<'a> {
-    SaveFrame(Vec<RawDataItem<'a>>),
+    SaveFrame {
+        name: &'a str,
+        content: Vec<RawDataItem<'a>>,
+    },
     Data {
         name: &'a str,
         value: RawDataItemContent<'a>,
