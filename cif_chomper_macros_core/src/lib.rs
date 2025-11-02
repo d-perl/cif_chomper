@@ -1,7 +1,7 @@
 use std::cell::LazyCell;
 
-use cif_chomper_core::model::{RawDataBlock, RawDataItem, RawDataItemContent, RawModel};
 use cif_chomper_core::parser::cif2_file;
+use cif_chomper_core::raw_model::{RawDataBlock, RawDataItem, RawDataItemContent, RawModel};
 use quote::quote;
 use syn::parse::{Parse, ParseStream};
 extern crate proc_macro;
@@ -13,6 +13,15 @@ const DICT: &str = include_str!("../../cif_core/cif_core.dic");
 const DICT_MODEL: LazyCell<RawModel> = LazyCell::new(|| cif2_file(DICT).unwrap());
 
 // To extract info from the dictionary to construct the model
+// https://www.iucr.org/resources/cif/ddl/ddlm/docs/intro
+// per data block:
+// 1 - split into save frames & global attr
+// 2 - extract head save frame from list of save frames
+// 3 - construct a tree based on categories
+// 4 - construct structs from tree depth first
+// 5 - open outermost struct based on _dictionary.namespace (sanitise if necessary)
+// 6 - add constant valiues from global attrs
+
 // For each save frame:
 // sort into bucket of _name.category_id
 
@@ -20,12 +29,13 @@ fn match_data_item(data_item: &RawDataItem) -> () {
     match &data_item {
         &RawDataItem::Data { name, value } => match &value {
             RawDataItemContent::Str(v) => {
-                dbg!((name, v));
+                println!("content str {}, {}", name, v);
             }
             _ => (),
         },
-        &RawDataItem::SaveFrame(items) => {
-            items.iter().for_each(match_data_item);
+        &RawDataItem::SaveFrame { name, content } => {
+            println!("\n SAVE FRAME {} \n", name);
+            content.iter().for_each(match_data_item);
         }
         _ => (),
     }
@@ -79,9 +89,19 @@ mod tests {
     }
 
     #[test]
+    fn test_ddl_model_content() {
+        let content = &DDL_MODEL.content;
+        dbg!(&DDL_MODEL.heading);
+        for data_block in content.as_slice()[0..1].iter() {
+            iterate_data_block(data_block);
+        }
+    }
+
+    #[test]
     fn test_dict_model_content() {
         let content = &DICT_MODEL.content;
-        for data_block in content.iter() {
+        dbg!(&DICT_MODEL.heading);
+        for data_block in content.as_slice()[0..1].iter() {
             iterate_data_block(data_block);
         }
     }
