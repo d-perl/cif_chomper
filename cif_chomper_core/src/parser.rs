@@ -21,7 +21,6 @@ fn restrict_char(c: char) -> bool {
 }
 static LEAD: &str = " \t\r\n[]{}\"#$\\_";
 
-
 macro_rules! reserved_word {
     ($n:ident, $tag:literal, $fun:ident, $a:ident, $t:ty) => {
         fn $n($a: $t) -> IResult<$t, $t> {
@@ -91,7 +90,6 @@ res_word_nocase!(stop_token, "stop_");
 
 res_word!(quote_3_delim, "\"\"\"");
 res_word!(apostrophe_3_delim, "'''");
-
 
 fn triple_dquote_string(input: &str) -> IResult<&str, RawDataItemContent> {
     let (inp, _) = quote_3_delim(input)?;
@@ -257,7 +255,7 @@ fn save_frame(input: &str) -> IResult<&str, RawDataItem> {
     let (inp, content) = many0(frame_content).parse(inp)?;
     let (inp, _) = wspace(inp)?;
     let (inp, _) = save_token(inp)?;
-    Ok((inp, RawDataItem::SaveFrame{name, content}))
+    Ok((inp, RawDataItem::SaveFrame { name, content }))
 }
 fn block_content(input: &str) -> IResult<&str, RawDataItem> {
     let (inp, _) = wspace(input)?;
@@ -326,7 +324,6 @@ mod tests {
     #[case(text_delim, "\n;abc", "abc", true)]
     #[case(text_delim, "\n;abc123\nxyz987\n;abc", "abc123\nxyz987\n;abc", true)]
     #[case(text_content, "abc123\nxyz987\n;abc", "\n;abc", true)]
-
     #[case(data_name, "_cif_field_item qwe rty", "_cif_field_item", true)]
     #[case(data_name, "cif_field_item qwe rty", "", false)]
     fn test_parser_basic_components(
@@ -385,7 +382,7 @@ x+3/4,z+1/4,-y+1/2
 x+3/4,-z+1/2,y+1/4
 loop_
 _atom_site_label,",
-        RawDataItem::Loop{ 
+        RawDataItem::Loop{
             names: vec!["_symmetry_equiv_pos_as_xyz"], 
             values: vec!["x,y,z","x,-y+1/4,-z+1/4","-x+1/4,y,-z+1/4","-x,-z+1/2,-y+1/2","-x,z+1/4,y+1/4","x+3/4,z+1/4,-y+1/2","x+3/4,-z+1/2,y+1/4",].iter().map(|s| RawDataItemContent::Str(s)).collect()
         },
