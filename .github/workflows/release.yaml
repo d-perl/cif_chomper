@@ -1,0 +1,23 @@
+---
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  RUST_BACKTRACE: 1
+
+jobs:
+
+  release:
+    uses: semantic-release-action/rust/.github/workflows/release-library.yml@v5
+    permissions:
+      contents: write
+      packages: write
+    with:
+      submodules: true
+      toolchain: stable
+    secrets:
+      cargo-registry-token: ${{ secrets.CARGO_REGISTRY_TOKEN }}
