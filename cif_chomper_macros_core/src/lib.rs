@@ -25,22 +25,22 @@ const DICT_MODEL: LazyCell<RawModel> = LazyCell::new(|| cif2_file(DICT).unwrap()
 // For each save frame:
 // sort into bucket of _name.category_id
 
-fn match_data_item(data_item: &RawDataItem) -> () {
+fn match_data_item(data_item: &RawDataItem) {
     match &data_item {
-        &RawDataItem::Data { name, value } => match &value {
+        RawDataItem::Data { name, value } => match &value {
             RawDataItemContent::Str(v) => {
-                println!("content str {}, {}", name, v);
+                println!("content str {name}, {v}");
             }
             _ => (),
         },
-        &RawDataItem::SaveFrame { name, content } => {
-            println!("\n SAVE FRAME {} \n", name);
+        RawDataItem::SaveFrame { name, content } => {
+            println!("\n SAVE FRAME {name} \n");
             content.iter().for_each(match_data_item);
         }
         _ => (),
     }
 }
-fn iterate_data_block(data_block: &RawDataBlock) -> () {
+fn iterate_data_block(data_block: &RawDataBlock) {
     data_block.content.iter().for_each(match_data_item);
 }
 
