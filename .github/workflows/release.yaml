@@ -10,14 +10,17 @@ env:
   RUST_BACKTRACE: 1
 
 jobs:
-
   release:
-    uses: semantic-release-action/rust/.github/workflows/release-library.yml@v5
     permissions:
-      contents: write
-      packages: write
-    with:
-      submodules: true
-      toolchain: stable
-    secrets:
-      cargo-registry-token: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+          contents: write
+          packages: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: semantic-release-action/rust/.github/workflows/release-library.yml@v5   
+        with:
+          submodules: true
+          toolchain: stable
+          disable-semantic-release-cargo: true
+      - uses: katyo/publish-crates@v2
+        with:
+          registry-token: ${{ secrets.CARGO_REGISTRY_TOKEN }}
