@@ -8,6 +8,36 @@ const DDL_MODEL: LazyCell<RawModel> = LazyCell::new(|| cif2_file(DDL).unwrap());
 const DICT: &str = include_str!("../../cif_core/cif_core.dic");
 const DICT_MODEL: LazyCell<RawModel> = LazyCell::new(|| cif2_file(DICT).unwrap());
 
+pub type Result<T> = std::result::Result<T, CifParserError>;
+
+#[derive(Debug)]
+pub enum CifParserError {
+    Io(std::io::Error),
+    // WrapperError(CextxyzError),
+    // InvalidValue(&'static str),
+}
+
+impl std::fmt::Display for CifParserError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            CifParserError::Io(err) => write!(f, "{err}"),
+        }
+    }
+}
+
+impl std::error::Error for CifParserError {
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        match self {
+            CifParserError::Io(error) => Some(error),
+            // _ => None,
+        }
+    }
+}
+
+// pub fn read_structure<R>(rd: &mut R) -> Result<Structure> {
+//     todo!()
+// }
+
 fn match_data_item(data_item: &RawDataItem) {
     match &data_item {
         RawDataItem::Data { name, value } => match &value {

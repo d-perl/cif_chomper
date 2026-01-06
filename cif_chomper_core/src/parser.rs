@@ -250,7 +250,7 @@ fn save_heading(input: &str) -> IResult<&str, &str> {
     let (inp, _) = save_token(input)?;
     container_code(inp)
 }
-fn save_frame(input: &str) -> IResult<&str, RawDataItem> {
+pub fn save_frame(input: &str) -> IResult<&str, RawDataItem> {
     let (inp, name) = save_heading(input)?;
     let (inp, content) = many0(frame_content).parse(inp)?;
     let (inp, _) = wspace(inp)?;
@@ -266,7 +266,7 @@ fn data_heading(input: &str) -> IResult<&str, &str> {
     let (inp, _) = data_token(input)?;
     container_code(inp)
 }
-fn data_block(input: &str) -> IResult<&str, RawDataBlock> {
+pub fn data_block(input: &str) -> IResult<&str, RawDataBlock> {
     let (inp, heading) = data_heading(input)?;
     let (inp, content) = many0(block_content).parse(inp)?;
     Ok((inp, RawDataBlock { heading, content }))
