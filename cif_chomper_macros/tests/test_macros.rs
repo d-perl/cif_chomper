@@ -1,8 +1,7 @@
 use cif_chomper_macros::make_model;
-const DICT: &str = include_str!("../../cif_core/cif_core.dic");
 
 #[test]
-fn it_works() {
+fn test_macro_make_model() {
     make_model!(StructName);
     assert_eq!(StructName { x: 6 }.x, 6);
 }

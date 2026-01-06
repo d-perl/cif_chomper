@@ -6,10 +6,10 @@ name = "cif_chomper_core"
 version = "0.1.0"
 edition = "2024"
 
-
 [dependencies]
-log = {workspace = true}
+log = "0.4.28"
 const-str = "0.6.4"
-env = "1.0.1"
 nom = "8.0.0"
+
+[dev-dependencies]
 rstest = "0.25.0"

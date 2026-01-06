@@ -1,0 +1,1 @@
+- why const_str? where is the performance panalty to not using it??

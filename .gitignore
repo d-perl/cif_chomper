@@ -1,2 +1,6 @@
 /target
 **/target
+
+# ignore lock of subcrates but keep the workspace root lockfile for test
+**/Cargo.lock
+!/Cargo.lock
