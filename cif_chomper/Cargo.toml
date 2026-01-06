@@ -1,5 +1,5 @@
 [lib]
-crate-type = ["cdylib","lib"]
+crate-type = ["lib"]
 
 [package]
 name = "cif_chomper"

@@ -1,3 +1,9 @@
+pub mod vessel {
+    include!("./__cif_vessel.rs");
+}
+
+use vessel::message;
+
 use std::cell::LazyCell;
 
 use cif_chomper_core::parser::cif2_file;
