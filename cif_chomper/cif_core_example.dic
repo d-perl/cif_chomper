@@ -1,0 +1,39 @@
+#\#CIF_2.0
+##########################################################################
+#                                                                        #
+#  CIF CORE DICTIONARY                                                   #
+#                                                                        #
+##########################################################################
+
+data_CIF_CORE
+
+    _dictionary.title             CIF_CORE
+    _dictionary.class             Instance
+    _dictionary.version           3.3.0
+    _dictionary.date              2025-06-18
+    _dictionary.uri
+        https://raw.githubusercontent.com/COMCIFS/cif_core/master/cif_core.dic
+    _dictionary.ddl_conformance   4.2.0
+    _dictionary.namespace         CifCore
+    _description.text
+;
+    The CIF_CORE dictionary defines data items that are common to all domains
+    of crystallographic studies. These definitions are mostly used within the
+    Crystallographic Information Framework (CIF).
+;
+
+save_CIF_CORE_HEAD
+
+    _definition.id                CIF_CORE_HEAD
+    _definition.scope             Category
+    _definition.class             Head
+    _definition.update            2024-05-15
+    _description.text
+;
+    The CIF_CORE_HEAD category is the top-level category for all categories in
+    the CIF_CORE dictionary.
+;
+    _name.category_id             CIF_CORE
+    _name.object_id               CIF_CORE_HEAD
+
+save_

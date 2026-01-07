@@ -9,7 +9,6 @@ edition = "2024"
 [dependencies]
 log = {workspace = true}
 cif_chomper_core = {path = "../cif_chomper_core"}
-cif_chomper_macros = {path = "../cif_chomper_macros"}
 
 [build-dependencies]
 quote = "1"
@@ -17,3 +16,4 @@ syn = "2"
 proc-macro2 = "1"
 prettyplease = "0.2"
 pest = "2"  
+cif_chomper_core = {path = "../cif_chomper_core"}

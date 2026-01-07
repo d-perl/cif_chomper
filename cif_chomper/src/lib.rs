@@ -2,6 +2,8 @@ pub mod vessel {
     include!("./__cif_vessel.rs");
 }
 
+mod _vessel_be_like;
+
 use vessel::Cell;
 
 use std::cell::LazyCell;
