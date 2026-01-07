@@ -26,6 +26,38 @@ fn main() {
     _type.contents                Word
 
 save_";
+    let s = r#"save_import_details.single
+
+    _definition.id                '_import_details.single'
+    _definition.class             Attribute
+    _definition.update            2017-07-21
+    _description.text
+;
+    A Table mapping attributes defined individually in category IMPORT to
+    their values; used to import definitions from other dictionaries.
+;
+    _name.category_id             import_details
+    _name.object_id               single
+    _type.purpose                 Internal
+    _type.source                  Assigned
+    _type.container               Table
+    _type.contents                Text
+    _type.indices                 ByReference
+    _type.indices_referenced_id   '_import_details.single_index'
+    _method.purpose               Evaluation
+    _method.expression
+;
+    with id as import_details
+    _import_details.single = {"file":id.file_id,
+                              "version":id.file_version,
+                              "save":id.frame_id,
+                              "mode":id.mode,
+                              "dupl":id.if_dupl,
+                              "miss":id.if_miss}
+;
+
+save_"#;
+
     let (_, blocks) = save_frame(s).unwrap();
     dbg!(blocks);
 }
