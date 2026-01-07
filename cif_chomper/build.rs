@@ -1,13 +1,64 @@
+use proc_macro2::Span;
+use proc_macro2::TokenStream;
+use quote::quote;
 use std::fs;
 use std::path::Path;
+use syn::File;
+use syn::Ident;
 
-fn cif_vessel_codegen() -> &'static str {
-    let ddl = include_str!("../cif_core/cif_core.dic");
-    let source = "pub fn message() -> &'static str {
-        \"Hello, World!ii\"
+struct Item {
+    name: String, // "_cell.angle_alpha" -> angle_alpha
+    ty: String,   // "Option<f64>" if SU
+}
+
+struct Category {
+    name: String, // "Cell"
+    items: Vec<Item>,
+}
+
+fn generate_struct(category: &Category) -> TokenStream {
+    let struct_name = Ident::new(&category.name, Span::call_site());
+
+    let fields: Vec<TokenStream> = category
+        .items
+        .iter()
+        .map(|item| {
+            let field_name = Ident::new(&item.name, Span::call_site());
+            let ty: syn::Type = syn::parse_str(&item.ty).unwrap();
+            quote! {
+                pub #field_name: #ty
+            }
+        })
+        .collect();
+
+    quote! {
+        #[derive(Debug, Clone)]
+        pub struct #struct_name {
+            #(#fields),*
+        }
     }
-    ";
-    source
+}
+
+fn cif_vessel_codegen() -> String {
+    // let ddl = include_str!("../cif_core/cif_core.dic");
+    let cell = Category {
+        name: "Cell".to_string(),
+        items: vec![
+            Item {
+                name: "angle_alpha".to_string(),
+                ty: "f64".to_string(),
+            },
+            Item {
+                name: "angle_alpha_su".to_string(),
+                ty: "Option<f64>".to_string(),
+            },
+        ],
+    };
+
+    let tokens = generate_struct(&cell);
+    let file: File = syn::parse2(tokens).unwrap();
+
+    prettyplease::unparse(&file)
 }
 
 fn main() {

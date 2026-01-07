@@ -2,7 +2,7 @@ pub mod vessel {
     include!("./__cif_vessel.rs");
 }
 
-use vessel::message;
+use vessel::Cell;
 
 use std::cell::LazyCell;
 
