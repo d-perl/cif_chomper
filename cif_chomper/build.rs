@@ -1,6 +1,9 @@
+use cif_chomper_core::parser::cif2_file;
+use cif_chomper_core::raw_model::RawModel;
 use proc_macro2::Span;
 use proc_macro2::TokenStream;
 use quote::quote;
+use std::collections::HashMap;
 use std::fs;
 use std::path::Path;
 use syn::File;
@@ -14,6 +17,18 @@ struct Item {
 struct Category {
     name: String, // "Cell"
     items: Vec<Item>,
+}
+
+struct SaveData {}
+struct SaveCategory {}
+
+enum SaveFrame {
+    Data(SaveData),
+    Category(SaveCategory),
+}
+
+fn convert_model_to_tbl(model: RawModel) -> HashMap<(&str, &str), SaveFrame> {
+    todo!();
 }
 
 fn generate_struct(category: &Category) -> TokenStream {
@@ -41,6 +56,11 @@ fn generate_struct(category: &Category) -> TokenStream {
 
 fn cif_vessel_codegen() -> String {
     // let ddl = include_str!("../cif_core/cif_core.dic");
+    // let ddl = include_str!("./cif_core_example.dic");
+    // let model = cif2_file(ddl).expect("parse cif_core");
+    // let tbl = convert_model_to_tbl(model);
+    // TODO: get a second table and have parent points its to children
+    // TODO: dfs the tree from head, codegen the struct along the traversal.
     let cell = Category {
         name: "Cell".to_string(),
         items: vec![

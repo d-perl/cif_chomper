@@ -13,13 +13,19 @@ pub struct RawDataBlock<'a> {
     pub content: Vec<RawDataItem<'a>>,
 }
 
-#[derive(Debug, PartialEq)]
-pub enum RawDataItemContent<'a> {
-    Empty,
-    Str(&'a str),
-    List(Vec<RawDataItemContent<'a>>),
-    Table(Vec<(RawDataItemContent<'a>, RawDataItemContent<'a>)>),
-}
+// XXX: not fully sync with grammar def, which is:
+//
+// ```cif
+// block-content = wspace, ( data | save-frame ) ;
+// save-frame = save-heading, { frame-content }, wspace, save-token ;
+// save-heading = save-token, container-code;
+// frame-content = wspace, data ;
+// container-code = non-blank-char, { non-blank-char } ;
+// data = ( data-name, wspace-data-value ) | data-loop ;
+// data-loop = loop-token, wspace, data-name, { wspace, data-name },
+//   wspace-data-value, { wspace-data-value } ;
+// ```
+//
 
 #[derive(Debug, PartialEq)]
 pub enum RawDataItem<'a> {
@@ -36,3 +42,12 @@ pub enum RawDataItem<'a> {
         values: Vec<RawDataItemContent<'a>>,
     },
 }
+
+#[derive(Debug, PartialEq)]
+pub enum RawDataItemContent<'a> {
+    Empty,
+    Str(&'a str),
+    List(Vec<RawDataItemContent<'a>>),
+    Table(Vec<(RawDataItemContent<'a>, RawDataItemContent<'a>)>),
+}
+
