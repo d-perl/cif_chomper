@@ -9,12 +9,12 @@ use vessel::Cell;
 use std::cell::LazyCell;
 
 use cif_chomper_core::parser::cif2_file;
-use cif_chomper_core::raw_model::{RawDataBlock, RawDataItem, RawDataItemContent, RawModel};
+use cif_chomper_core::model::{Block, BlockItem, DataItem, DataValue, Model};
 
 const DDL: &str = include_str!("../../cif_core/ddl.dic");
-const DDL_MODEL: LazyCell<RawModel> = LazyCell::new(|| cif2_file(DDL).unwrap());
+const DDL_MODEL: LazyCell<Model> = LazyCell::new(|| cif2_file(DDL).unwrap());
 const DICT: &str = include_str!("../../cif_core/cif_core.dic");
-const DICT_MODEL: LazyCell<RawModel> = LazyCell::new(|| cif2_file(DICT).unwrap());
+const DICT_MODEL: LazyCell<Model> = LazyCell::new(|| cif2_file(DICT).unwrap());
 
 pub type Result<T> = std::result::Result<T, CifParserError>;
 
@@ -46,25 +46,18 @@ impl std::error::Error for CifParserError {
 //     todo!()
 // }
 
-fn match_data_item(data_item: &RawDataItem) {
-    match &data_item {
-        RawDataItem::Data { name, value } => match &value {
-            RawDataItemContent::Str(v) => {
-                println!("content str {name}, {v}");
-            }
-            _ => (),
-        },
-        RawDataItem::SaveFrame { name, content } => {
-            println!("\n SAVE FRAME {name} \n");
+fn match_block_item(item: &BlockItem) {
+    match &item {
+        BlockItem::Data(data) => match_data_item(data),
+        BlockItem::SaveFrame { heading, content } => {
+            println!("\n SAVE FRAME {heading} \n");
             content.iter().for_each(match_data_item);
         }
         _ => (),
     }
 }
 
-fn iterate_data_block(data_block: &RawDataBlock) {
-    data_block.content.iter().for_each(match_data_item);
-}
+fn match_data_item(item: &DataItem) {}
 
 #[test]
 fn test_load_ddl_str() {
@@ -83,8 +76,8 @@ fn test_load_ddl_model() {
 fn test_ddl_model_content() {
     let content = &DDL_MODEL.content;
     dbg!(&DDL_MODEL.heading);
-    for data_block in content.as_slice()[0..1].iter() {
-        iterate_data_block(data_block);
+    for block in content.as_slice()[0..1].iter() {
+        block.content.iter().for_each(match_block_item);
     }
 }
 
@@ -92,7 +85,7 @@ fn test_ddl_model_content() {
 fn test_dict_model_content() {
     let content = &DICT_MODEL.content;
     dbg!(&DICT_MODEL.heading);
-    for data_block in content.as_slice()[0..1].iter() {
-        iterate_data_block(data_block);
+    for block in content.as_slice()[0..1].iter() {
+        block.content.iter().for_each(match_block_item);
     }
 }
