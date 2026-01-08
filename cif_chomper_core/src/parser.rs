@@ -1,11 +1,11 @@
-use crate::raw_model::{RawDataBlock, RawDataItem, RawDataItemContent, RawModel};
+use crate::model::{Block, BlockItem, DataItem, DataValue, Model};
 use const_str::to_char_array;
 use nom::{
     IResult, Parser,
     branch::alt,
     bytes::complete::{is_not, tag, tag_no_case, take_until, take_while1},
     character::complete::{char, line_ending, not_line_ending, space0, space1},
-    combinator::{eof, not, opt, peek},
+    combinator::{eof, map_res, not, opt, peek},
     error::Error,
     multi::{many0, many1, separated_list1},
     sequence::terminated,
@@ -74,11 +74,11 @@ fn non_blank_chars(input: &str) -> IResult<&str, &str> {
 fn text_content(input: &str) -> IResult<&str, &str> {
     alt((take_until("\n;"), take_until("\r\n;"), take_until("\r;"))).parse(input)
 }
-fn text_field(input: &str) -> IResult<&str, RawDataItemContent> {
+fn text_field(input: &str) -> IResult<&str, DataValue> {
     let (inp, _) = text_delim(input)?;
     let (inp, value) = text_content(inp)?;
     let (inp, _) = text_delim(inp)?;
-    Ok((inp, RawDataItemContent::Str(value)))
+    Ok((inp, DataValue::Str(value)))
 }
 
 res_word!(magic_code, r"#\#CIF_2.0");
@@ -91,34 +91,34 @@ res_word_nocase!(stop_token, "stop_");
 res_word!(quote_3_delim, "\"\"\"");
 res_word!(apostrophe_3_delim, "'''");
 
-fn triple_dquote_string(input: &str) -> IResult<&str, RawDataItemContent> {
+fn triple_dquote_string(input: &str) -> IResult<&str, DataValue> {
     let (inp, _) = quote_3_delim(input)?;
     let (inp, value) = take_until("\"\"\"").parse(inp)?;
     let (inp, _) = quote_3_delim(inp)?;
-    Ok((inp, RawDataItemContent::Str(value)))
+    Ok((inp, DataValue::Str(value)))
 }
-fn triple_apo_string(input: &str) -> IResult<&str, RawDataItemContent> {
+fn triple_apo_string(input: &str) -> IResult<&str, DataValue> {
     let (inp, _) = apostrophe_3_delim(input)?;
     let (inp, value) = take_until("'''").parse(inp)?;
     let (inp, _) = apostrophe_3_delim(inp)?;
-    Ok((inp, RawDataItemContent::Str(value)))
+    Ok((inp, DataValue::Str(value)))
 }
-fn triple_quoted_string(input: &str) -> IResult<&str, RawDataItemContent> {
+fn triple_quoted_string(input: &str) -> IResult<&str, DataValue> {
     alt((triple_dquote_string, triple_apo_string)).parse(input)
 }
-fn single_squote_string(input: &str) -> IResult<&str, RawDataItemContent> {
+fn single_squote_string(input: &str) -> IResult<&str, DataValue> {
     let (inp, _) = char('\'')(input)?;
     let (inp, value) = take_while1(|c| c != '\'').parse(inp)?;
     let (inp, _) = char('\'')(inp)?;
-    Ok((inp, RawDataItemContent::Str(value)))
+    Ok((inp, DataValue::Str(value)))
 }
-fn single_dquote_string(input: &str) -> IResult<&str, RawDataItemContent> {
+fn single_dquote_string(input: &str) -> IResult<&str, DataValue> {
     let (inp, _) = char('"')(input)?;
     let (inp, value) = take_while1(|c| c != '"').parse(inp)?;
     let (inp, _) = char('"')(inp)?;
-    Ok((inp, RawDataItemContent::Str(value)))
+    Ok((inp, DataValue::Str(value)))
 }
-fn single_quoted_string(input: &str) -> IResult<&str, RawDataItemContent> {
+fn single_quoted_string(input: &str) -> IResult<&str, DataValue> {
     alt((single_dquote_string, single_squote_string)).parse(input)
 }
 fn not_token(input: &str) -> IResult<&str, ()> {
@@ -128,22 +128,22 @@ fn not_token(input: &str) -> IResult<&str, ()> {
     not(global_token).parse(input)?;
     not(stop_token).parse(input)
 }
-fn wsdelim_string(input: &str) -> IResult<&str, RawDataItemContent> {
+fn wsdelim_string(input: &str) -> IResult<&str, DataValue> {
     not_token(input)?;
     peek(is_not(LEAD)).parse(input)?;
     let (inp, value) = take_while1(restrict_char).parse(input)?;
-    Ok((inp, RawDataItemContent::Str(value)))
+    Ok((inp, DataValue::Str(value)))
 }
-fn wsdelim_string_sol(input: &str) -> IResult<&str, RawDataItemContent> {
+fn wsdelim_string_sol(input: &str) -> IResult<&str, DataValue> {
     not_token(input)?;
     peek(is_not(LEAD)).parse(input)?;
     if peek(char::<&str, Error<&str>>(';')).parse(input).is_ok() {
         let (inp, _) = char(';')(input)?;
         let (inp, _) = space1(inp)?;
-        Ok((inp, RawDataItemContent::Empty))
+        Ok((inp, DataValue::Empty))
     } else {
         let (inp, value) = take_while1(restrict_char).parse(input)?;
-        Ok((inp, RawDataItemContent::Str(value)))
+        Ok((inp, DataValue::Str(value)))
     }
 }
 fn data_name(input: &str) -> IResult<&str, &str> {
@@ -151,7 +151,7 @@ fn data_name(input: &str) -> IResult<&str, &str> {
     let (inp, name) = non_blank_chars(input)?;
     Ok((inp, name))
 }
-fn list_values_start(input: &str) -> IResult<&str, RawDataItemContent> {
+fn list_values_start(input: &str) -> IResult<&str, DataValue> {
     let p1 = |inp| nospace_value(wspace_any(inp)?.0);
     let p2 = |inp| {
         let (inp_, _) = wspace_any(inp)?;
@@ -168,15 +168,15 @@ fn list_values_start(input: &str) -> IResult<&str, RawDataItemContent> {
     };
     alt((p1, p2, p3, p4)).parse(input)
 }
-fn list(input: &str) -> IResult<&str, RawDataItemContent> {
+fn list(input: &str) -> IResult<&str, DataValue> {
     let (inp, _) = char('[')(input)?;
     let (inp, _) = opt(list_values_start).parse(inp)?;
     let (inp, values) = many0(wspace_data_value).parse(inp)?;
     let (inp, _) = wspace_any(space0(inp)?.0)?;
     let (inp, _) = char(']')(inp)?;
-    Ok((inp, RawDataItemContent::List(values)))
+    Ok((inp, DataValue::List(values)))
 }
-fn table(input: &str) -> IResult<&str, RawDataItemContent> {
+fn table(input: &str) -> IResult<&str, DataValue> {
     let wspace_tentry = |inp| table_entry(space0(inp)?.0);
     // TODO: replace with separated_list (0)
     let (inp, _) = char('{')(input)?;
@@ -184,43 +184,50 @@ fn table(input: &str) -> IResult<&str, RawDataItemContent> {
     let (inp, entry_1) = opt(table_entry).parse(inp)?;
     if entry_1.is_none() {
         let (inp, _) = char('}')(inp)?;
-        return Ok((inp, RawDataItemContent::Table(Vec::new())));
+        return Ok((inp, DataValue::Table(Vec::new())));
     }
     let (inp, entries) = many0(wspace_tentry).parse(inp)?;
     let (inp, _) = space0(inp)?;
     let (inp, _) = char('}')(inp)?;
-    Ok((inp, RawDataItemContent::Table(entries)))
+    Ok((inp, DataValue::Table(entries)))
 }
-fn nospace_value(input: &str) -> IResult<&str, RawDataItemContent> {
+fn nospace_value(input: &str) -> IResult<&str, DataValue> {
     alt((single_quoted_string, triple_quoted_string, list, table)).parse(input)
 }
-fn wspace_dv_1(input: &str) -> IResult<&str, RawDataItemContent> {
+fn wspace_dv_1(input: &str) -> IResult<&str, DataValue> {
     nospace_value(wspace(input)?.0)
 }
-fn wspace_dv_2(input: &str) -> IResult<&str, RawDataItemContent> {
+fn wspace_dv_2(input: &str) -> IResult<&str, DataValue> {
     let (inp, _) = opt(wspace_lines).parse(input)?;
     let (inp, _) = space1(inp)?;
     let (inp, value) = wsdelim_string(inp)?;
     Ok((inp, value))
 }
-fn wspace_dv_3(input: &str) -> IResult<&str, RawDataItemContent> {
+fn wspace_dv_3(input: &str) -> IResult<&str, DataValue> {
     let (inp, value) = wsdelim_string_sol(wspace_lines(input)?.0)?;
     Ok((inp, value))
 }
-fn wspace_dv_4(input: &str) -> IResult<&str, RawDataItemContent> {
+fn wspace_dv_4(input: &str) -> IResult<&str, DataValue> {
     let (inp, value) = text_field(opt(comment).parse(opt(space0).parse(input)?.0)?.0)?;
     Ok((inp, value))
 }
-fn wspace_data_value(input: &str) -> IResult<&str, RawDataItemContent> {
+fn wspace_data_value(input: &str) -> IResult<&str, DataValue> {
     alt((wspace_dv_1, wspace_dv_2, wspace_dv_3, wspace_dv_4)).parse(input)
 }
-fn table_entry(input: &str) -> IResult<&str, (RawDataItemContent, RawDataItemContent)> {
-    let (inp, key) = alt((single_quoted_string, triple_quoted_string)).parse(input)?;
+fn table_entry(input: &str) -> IResult<&str, (&str, DataValue)> {
+    let (inp, key) = map_res(
+        alt((single_quoted_string, triple_quoted_string)),
+        |v| match v {
+            DataValue::Str(s) => Ok(s),
+            _ => Err(()),
+        },
+    )
+    .parse(input)?;
     let (inp, _) = char(':')(inp)?;
     let (inp, value) = alt((nospace_value, wsdelim_string, wspace_data_value)).parse(inp)?;
     Ok((inp, (key, value)))
 }
-fn data_loop(input: &str) -> IResult<&str, RawDataItem> {
+fn data_loop(input: &str) -> IResult<&str, DataItem> {
     let (inp, _) = loop_token(input)?;
     let (inp, _) = wspace(inp)?;
     let (inp, names) = separated_list1(wspace, data_name).parse(inp)?;
@@ -229,20 +236,24 @@ fn data_loop(input: &str) -> IResult<&str, RawDataItem> {
     // if values.len() % names.len() != 0 {
     //     Err...
     // }
-    Ok((inp, RawDataItem::Loop { names, values }))
+    Ok((inp, DataItem::DataLoop { names, values }))
 }
-fn data(input: &str) -> IResult<&str, RawDataItem> {
+fn data(input: &str) -> IResult<&str, DataItem> {
     let data_item = |inp| {
         let (inp_, name) = data_name(inp)?;
         let (inp_, value) = wspace_data_value(inp_)?;
-        Ok((inp_, RawDataItem::Data { name, value }))
+        Ok((inp_, DataItem::Data { name, value }))
     };
     alt((data_item, data_loop)).parse(input)
+}
+fn data_block_item(input: &str) -> IResult<&str, BlockItem> {
+    let (inp, d) = data(input)?;
+    Ok((inp, BlockItem::Data(d)))
 }
 fn container_code(input: &str) -> IResult<&str, &str> {
     take_while1(non_blank).parse(input)
 }
-fn frame_content(input: &str) -> IResult<&str, RawDataItem> {
+fn frame_content(input: &str) -> IResult<&str, DataItem> {
     let (inp, _) = wspace(input)?;
     data(inp)
 }
@@ -250,26 +261,26 @@ fn save_heading(input: &str) -> IResult<&str, &str> {
     let (inp, _) = save_token(input)?;
     container_code(inp)
 }
-pub fn save_frame(input: &str) -> IResult<&str, RawDataItem> {
-    let (inp, name) = save_heading(input)?;
+pub fn save_frame(input: &str) -> IResult<&str, BlockItem> {
+    let (inp, heading) = save_heading(input)?;
     let (inp, content) = many0(frame_content).parse(inp)?;
     let (inp, _) = wspace(inp)?;
     let (inp, _) = save_token(inp)?;
-    Ok((inp, RawDataItem::SaveFrame { name, content }))
+    Ok((inp, BlockItem::SaveFrame { heading, content }))
 }
-fn block_content(input: &str) -> IResult<&str, RawDataItem> {
+fn block_content(input: &str) -> IResult<&str, BlockItem> {
     let (inp, _) = wspace(input)?;
-    let (inp, cont) = alt((data, save_frame)).parse(inp)?;
+    let (inp, cont) = alt((data_block_item, save_frame)).parse(inp)?;
     Ok((inp, cont))
 }
 fn data_heading(input: &str) -> IResult<&str, &str> {
     let (inp, _) = data_token(input)?;
     container_code(inp)
 }
-pub fn data_block(input: &str) -> IResult<&str, RawDataBlock> {
+pub fn block(input: &str) -> IResult<&str, Block> {
     let (inp, heading) = data_heading(input)?;
     let (inp, content) = many0(block_content).parse(inp)?;
-    Ok((inp, RawDataBlock { heading, content }))
+    Ok((inp, Block { heading, content }))
 }
 fn file_heading(input: &str) -> IResult<&str, &str> {
     let (inp, _) = opt(char('\u{FEFF}')).parse(input)?;
@@ -277,13 +288,13 @@ fn file_heading(input: &str) -> IResult<&str, &str> {
     let (inp, _) = space0(inp)?;
     Ok((inp, code))
 }
-fn file_content(input: &str) -> IResult<&str, Vec<RawDataBlock>> {
+fn file_content(input: &str) -> IResult<&str, Vec<Block>> {
     let (inp, _) = line_ending(input)?;
     let (inp, _) = wspace_any(inp)?;
-    let (inp, blocks) = separated_list1(wspace, data_block).parse(inp)?;
+    let (inp, blocks) = separated_list1(wspace, block).parse(inp)?;
     Ok((inp, blocks))
 }
-pub fn cif2_file(input: &str) -> Result<RawModel, &str> {
+pub fn cif2_file(input: &str) -> Result<Model, &str> {
     let (inp, heading) = file_heading(input).map_err(|_| "heading")?;
     let (inp, content) = file_content(inp).map_err(|_| "content")?;
     let (inp, _) = wspace_any(inp).map_err(|_| "trailing wspace")?;
@@ -291,7 +302,7 @@ pub fn cif2_file(input: &str) -> Result<RawModel, &str> {
         .parse(inp)
         .map_err(|_| "trailing opt comment")?;
     eof::<&str, ()>(inp).map_err(|_| "expected eof")?;
-    Ok(RawModel { heading, content })
+    Ok(Model { heading, content })
 }
 
 #[cfg(test)]
@@ -352,7 +363,7 @@ mod tests {
     #[case(triple_quoted_string, "\"\"\"asdf  7' \n\t \"\"a\"abc", "", false)]
     #[case(triple_quoted_string, "'''asdf  7' \n\t '''abc", "abc", true)]
     fn test_parser_data_components(
-        #[case] func: fn(&str) -> IResult<&str, RawDataItemContent>,
+        #[case] func: fn(&str) -> IResult<&str, DataValue>,
         #[case] input: &str,
         #[case] expected: &str,
         #[case] good: bool,
@@ -363,7 +374,7 @@ mod tests {
             assert!(test.is_ok());
             let res = test.unwrap();
             println!("e: {:?} - f: {:?}", expected, res);
-            assert!(res.0 == expected || res.1 == RawDataItemContent::Str(expected))
+            assert!(res.0 == expected || res.1 == DataValue::Str(expected))
         } else {
             assert!(test.is_err())
         }
@@ -382,13 +393,13 @@ x+3/4,z+1/4,-y+1/2
 x+3/4,-z+1/2,y+1/4
 loop_
 _atom_site_label,",
-        RawDataItem::Loop{
+        DataItem::DataLoop{
             names: vec!["_symmetry_equiv_pos_as_xyz"], 
-            values: vec!["x,y,z","x,-y+1/4,-z+1/4","-x+1/4,y,-z+1/4","-x,-z+1/2,-y+1/2","-x,z+1/4,y+1/4","x+3/4,z+1/4,-y+1/2","x+3/4,-z+1/2,y+1/4",].iter().map(|s| RawDataItemContent::Str(s)).collect()
+            values: vec!["x,y,z","x,-y+1/4,-z+1/4","-x+1/4,y,-z+1/4","-x,-z+1/2,-y+1/2","-x,z+1/4,y+1/4","x+3/4,z+1/4,-y+1/2","x+3/4,-z+1/2,y+1/4",].iter().map(|s| DataValue::Str(s)).collect()
         },
         true
     )]
-    fn test_parser_loop(#[case] input: &str, #[case] expected: RawDataItem, #[case] good: bool) {
+    fn test_parser_loop(#[case] input: &str, #[case] expected: DataItem, #[case] good: bool) {
         let test = data_loop(input);
         dbg!(&test);
         if good {
@@ -424,7 +435,7 @@ x,-y+1/4,-z+1/4
             assert!(test.is_ok());
             let res = test.unwrap();
             println!("e: {:?} - f: {:?}", expected, res);
-            assert!(res.0 == expected || res.1 == RawDataItemContent::Str(expected))
+            assert!(res.0 == expected || res.1 == DataValue::Str(expected))
         } else {
             assert!(wspace_dv_1(input).is_err());
             assert!(wspace_dv_2(input).is_err());

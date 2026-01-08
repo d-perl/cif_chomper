@@ -1,5 +1,5 @@
 use cif_chomper_core::parser::cif2_file;
-use cif_chomper_core::raw_model::RawModel;
+use cif_chomper_core::model::Model;
 use proc_macro2::Span;
 use proc_macro2::TokenStream;
 use quote::quote;
@@ -27,7 +27,7 @@ enum SaveFrame {
     Category(SaveCategory),
 }
 
-fn convert_model_to_tbl(model: RawModel) -> HashMap<(&str, &str), SaveFrame> {
+fn convert_model_to_tbl(model: Model) -> HashMap<(&str, &str), SaveFrame> {
     todo!();
 }
 
