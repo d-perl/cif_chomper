@@ -1,9 +1,8 @@
-use cif_chomper_core::parser::cif2_file;
-use cif_chomper_core::model::Model;
+// use cif_chomper_core::model::Model;
 use proc_macro2::Span;
 use proc_macro2::TokenStream;
 use quote::quote;
-use std::collections::HashMap;
+// use std::collections::HashMap;
 use std::fs;
 use std::path::Path;
 use syn::File;
@@ -19,17 +18,17 @@ struct Category {
     items: Vec<Item>,
 }
 
-struct SaveData {}
-struct SaveCategory {}
+// struct SaveData {}
+// struct SaveCategory {}
+//
+// enum SaveFrame {
+//     Data(SaveData),
+//     Category(SaveCategory),
+// }
 
-enum SaveFrame {
-    Data(SaveData),
-    Category(SaveCategory),
-}
-
-fn convert_model_to_tbl(model: Model) -> HashMap<(&str, &str), SaveFrame> {
-    todo!();
-}
+// fn convert_model_to_tbl(model: Model) -> HashMap<(&str, &str), SaveFrame> {
+//     todo!();
+// }
 
 fn generate_struct(category: &Category) -> TokenStream {
     let struct_name = Ident::new(&category.name, Span::call_site());

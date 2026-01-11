@@ -4,17 +4,7 @@ pub mod vessel {
 
 mod _vessel_be_like;
 
-use vessel::Cell;
-
-use std::cell::LazyCell;
-
-use cif_chomper_core::parser::cif2_file;
-use cif_chomper_core::model::{Block, BlockItem, DataItem, DataValue, Model};
-
-const DDL: &str = include_str!("../../cif_core/ddl.dic");
-const DDL_MODEL: LazyCell<Model> = LazyCell::new(|| cif2_file(DDL).unwrap());
-const DICT: &str = include_str!("../../cif_core/cif_core.dic");
-const DICT_MODEL: LazyCell<Model> = LazyCell::new(|| cif2_file(DICT).unwrap());
+// use vessel::Cell;
 
 pub type Result<T> = std::result::Result<T, CifParserError>;
 
@@ -46,46 +36,81 @@ impl std::error::Error for CifParserError {
 //     todo!()
 // }
 
-fn match_block_item(item: &BlockItem) {
-    match &item {
-        BlockItem::Data(data) => match_data_item(data),
-        BlockItem::SaveFrame { heading, content } => {
-            println!("\n SAVE FRAME {heading} \n");
-            content.iter().for_each(match_data_item);
+#[cfg(test)]
+mod tests {
+    use cif_chomper_core::model::{BlockItem, DataItem, Model};
+    use cif_chomper_core::parser::cif2_file;
+    use std::sync::OnceLock;
+
+    static DDL: &str = include_str!("../../cif_core/ddl.dic");
+    static DDL_MODEL: OnceLock<Model<'static>> = OnceLock::new();
+
+    pub fn ddl_model() -> &'static Model<'static> {
+        DDL_MODEL.get_or_init(|| cif2_file(DDL).unwrap())
+    }
+
+    const DICT: &str = include_str!("../../cif_core/cif_core.dic");
+    static DICT_MODEL: OnceLock<Model<'static>> = OnceLock::new();
+
+    pub fn dict_model() -> &'static Model<'static> {
+        DICT_MODEL.get_or_init(|| cif2_file(DICT).unwrap())
+    }
+
+    fn match_block_item(item: &BlockItem) {
+        match &item {
+            BlockItem::Data(data) => match_data_item(data),
+            BlockItem::SaveFrame { heading, content } => {
+                println!("\n SAVE FRAME {heading} \n");
+                content.iter().for_each(match_data_item);
+            }
         }
-        _ => (),
     }
-}
 
-fn match_data_item(item: &DataItem) {}
-
-#[test]
-fn test_load_ddl_str() {
-    assert!(DDL.len() > 100);
-}
-
-#[test]
-fn test_load_ddl_model() {
-    println!("{:?}", DDL_MODEL.content[0].heading);
-    println!("{:?}", DDL_MODEL.content[0].content.len());
-    let content = &DDL_MODEL.content;
-    assert!(content[0].content.len() > 5);
-}
-
-#[test]
-fn test_ddl_model_content() {
-    let content = &DDL_MODEL.content;
-    dbg!(&DDL_MODEL.heading);
-    for block in content.as_slice()[0..1].iter() {
-        block.content.iter().for_each(match_block_item);
+    fn match_data_item(item: &DataItem) {
+        match &item {
+            DataItem::Data { name, value } => {
+                println!("data {name}");
+                match value {
+                    cif_chomper_core::model::DataValue::Empty => todo!(),
+                    cif_chomper_core::model::DataValue::Str(_) => todo!(),
+                    cif_chomper_core::model::DataValue::List(data_values) => todo!(),
+                    cif_chomper_core::model::DataValue::Table(items) => todo!(),
+                }
+            }
+            DataItem::DataLoop { names, values } => {
+                todo!()
+            }
+        }
     }
-}
 
-#[test]
-fn test_dict_model_content() {
-    let content = &DICT_MODEL.content;
-    dbg!(&DICT_MODEL.heading);
-    for block in content.as_slice()[0..1].iter() {
-        block.content.iter().for_each(match_block_item);
+    #[test]
+    fn test_load_ddl_str() {
+        assert!(DDL.len() > 100);
+    }
+
+    #[test]
+    fn test_load_ddl_model() {
+        println!("{:?}", ddl_model().content[0].heading);
+        println!("{:?}", ddl_model().content[0].content.len());
+        let content = &ddl_model().content;
+        assert!(content[0].content.len() > 5);
+    }
+
+    #[test]
+    fn test_ddl_model_content() {
+        let content = &ddl_model().content;
+        dbg!(&ddl_model().heading);
+        for block in &content.as_slice()[0..1] {
+            block.content.iter().for_each(match_block_item);
+        }
+    }
+
+    #[test]
+    fn test_dict_model_content() {
+        let content = &dict_model().content;
+        dbg!(&dict_model().heading);
+        for block in &content.as_slice()[0..1] {
+            block.content.iter().for_each(match_block_item);
+        }
     }
 }
