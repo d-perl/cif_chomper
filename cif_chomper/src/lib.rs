@@ -38,7 +38,7 @@ impl std::error::Error for CifParserError {
 
 #[cfg(test)]
 mod tests {
-    use cif_chomper_core::model::{BlockItem, DataItem, Model};
+    use cif_chomper_core::model::Model;
     use cif_chomper_core::parser::cif2_file;
     use std::sync::OnceLock;
 
@@ -54,33 +54,6 @@ mod tests {
 
     pub fn dict_model() -> &'static Model<'static> {
         DICT_MODEL.get_or_init(|| cif2_file(DICT).unwrap())
-    }
-
-    fn match_block_item(item: &BlockItem) {
-        match &item {
-            BlockItem::Data(data) => match_data_item(data),
-            BlockItem::SaveFrame { heading, content } => {
-                println!("\n SAVE FRAME {heading} \n");
-                content.iter().for_each(match_data_item);
-            }
-        }
-    }
-
-    fn match_data_item(item: &DataItem) {
-        match &item {
-            DataItem::Data { name, value } => {
-                println!("data {name}");
-                match value {
-                    cif_chomper_core::model::DataValue::Empty => todo!(),
-                    cif_chomper_core::model::DataValue::Str(_) => todo!(),
-                    cif_chomper_core::model::DataValue::List(data_values) => todo!(),
-                    cif_chomper_core::model::DataValue::Table(items) => todo!(),
-                }
-            }
-            DataItem::DataLoop { names, values } => {
-                todo!()
-            }
-        }
     }
 
     #[test]
@@ -101,7 +74,9 @@ mod tests {
         let content = &ddl_model().content;
         dbg!(&ddl_model().heading);
         for block in &content.as_slice()[0..1] {
-            block.content.iter().for_each(match_block_item);
+            block.content.iter().for_each(|i| {
+                println!("{i}");
+            });
         }
     }
 
@@ -110,7 +85,9 @@ mod tests {
         let content = &dict_model().content;
         dbg!(&dict_model().heading);
         for block in &content.as_slice()[0..1] {
-            block.content.iter().for_each(match_block_item);
+            block.content.iter().for_each(|i| {
+                println!("{i}");
+            });
         }
     }
 }
