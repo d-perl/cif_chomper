@@ -1,0 +1,667 @@
+#\#CIF_2.0
+##############################################################################
+#                                                                            #
+#         TEMPLATE DICTIONARY OF COMMONLY USED ENUMERATIONS                  #
+#                                                                            #
+##############################################################################
+
+data_COM_VAL
+
+    _dictionary.title            COM_VAL
+    _dictionary.class            Template
+    _dictionary.version          1.4.9
+    _dictionary.date             2025-07-04
+    _dictionary.uri              https://raw.githubusercontent.com/COMCIFS/cif_core/master/templ_enum.cif
+    _dictionary.ddl_conformance  4.2.0
+    _description.text
+;
+     This dictionary contains commonly used enumeration value sets that
+     are imported into CIF dictionaries.
+;
+
+#---------------------------------------------------------------------------
+
+save_h_m_ref
+
+    loop_
+        _enumeration_set.state
+        _enumeration_set.detail
+               'P 1'           '  1  C1.1'
+               'P -1'          '  2  Ci.1'
+               'P 2'           '  3  C2.1'
+               'P 21'          '  4  C2.2'
+               'C 2'           '  5  C2.3'
+               'P m'           '  6  Cs.1'
+               'P c'           '  7  Cs.2'
+               'C m'           '  8  Cs.3'
+               'C c'           '  9  Cs.4'
+               'P 2/m'         ' 10  C2h.1'
+               'P 21/m'        ' 11  C2h.2'
+               'C 2/m'         ' 12  C2h.3'
+               'P 2/c'         ' 13  C2h.4'
+               'P 21/c'        ' 14  C2h.5'
+               'C 2/c'         ' 15  C2h.6'
+               'P 2 2 2'       ' 16  D2.1'
+               'P 2 2 21'      ' 17  D2.2'
+               'P 21 21 2'     ' 18  D2.3'
+               'P 21 21 21'    ' 19  D2.4'
+               'C 2 2 21'      ' 20  D2.5'
+               'C 2 2 2'       ' 21  D2.6'
+               'F 2 2 2'       ' 22  D2.7'
+               'I 2 2 2'       ' 23  D2.8'
+               'I 21 21 21'    ' 24  D2.9'
+               'P m m 2'       ' 25  C2v.1'
+               'P m c 21'      ' 26  C2v.2'
+               'P c c 2'       ' 27  C2v.3'
+               'P m a 2'       ' 28  C2v.4'
+               'P c a 21'      ' 29  C2v.5'
+               'P n c 2'       ' 30  C2v.6'
+               'P m n 21'      ' 31  C2v.7'
+               'P b a 2'       ' 32  C2v.8'
+               'P n a 21'      ' 33  C2v.9'
+               'P n n 2'       ' 34  C2v.10'
+               'C m m 2'       ' 35  C2v.11'
+               'C m c 21'      ' 36  C2v.12'
+               'C c c 2'       ' 37  C2v.13'
+               'A m m 2'       ' 38  C2v.14'
+               'A e m 2'       ' 39  C2v.15'
+               'A m a 2'       ' 40  C2v.16'
+               'A e a 2'       ' 41  C2v.17'
+               'F m m 2'       ' 42  C2v.18'
+               'F d d 2'       ' 43  C2v.19'
+               'I m m 2'       ' 44  C2v.20'
+               'I b a 2'       ' 45  C2v.21'
+               'I m a 2'       ' 46  C2v.22'
+               'P m m m'       ' 47  D2h.1'
+               'P n n n'       ' 48  D2h.2'
+               'P c c m'       ' 49  D2h.3'
+               'P b a n'       ' 50  D2h.4'
+               'P m m a'       ' 51  D2h.5'
+               'P n n a'       ' 52  D2h.6'
+               'P m n a'       ' 53  D2h.7'
+               'P c c a'       ' 54  D2h.8'
+               'P b a m'       ' 55  D2h.9'
+               'P c c n'       ' 56  D2h.10'
+               'P b c m'       ' 57  D2h.11'
+               'P n n m'       ' 58  D2h.12'
+               'P m m n'       ' 59  D2h.13'
+               'P b c n'       ' 60  D2h.14'
+               'P b c a'       ' 61  D2h.15'
+               'P n m a'       ' 62  D2h.16'
+               'C m c m'       ' 63  D2h.17'
+               'C m c e'       ' 64  D2h.18'
+               'C m m m'       ' 65  D2h.19'
+               'C c c m'       ' 66  D2h.20'
+               'C m m e'       ' 67  D2h.21'
+               'C c c e'       ' 68  D2h.22'
+               'F m m m'       ' 69  D2h.23'
+               'F d d d'       ' 70  D2h.24'
+               'I m m m'       ' 71  D2h.25'
+               'I b a m'       ' 72  D2h.26'
+               'I b c a'       ' 73  D2h.27'
+               'I m m a'       ' 74  D2h.28'
+               'P 4'           ' 75  C4.1'
+               'P 41'          ' 76  C4.2'
+               'P 42'          ' 77  C4.3'
+               'P 43'          ' 78  C4.4'
+               'I 4'           ' 79  C4.5'
+               'I 41'          ' 80  C4.6'
+               'P -4'          ' 81  S4.1'
+               'I -4'          ' 82  S4.2'
+               'P 4/m'         ' 83  C4h.1'
+               'P 42/m'        ' 84  C4h.2'
+               'P 4/n'         ' 85  C4h.3'
+               'P 42/n'        ' 86  C4h.4'
+               'I 4/m'         ' 87  C4h.5'
+               'I 41/a'        ' 88  C4h.6'
+               'P 4 2 2'       ' 89  D4.1'
+               'P 4 21 2'      ' 90  D4.2'
+               'P 41 2 2'      ' 91  D4.3'
+               'P 41 21 2'     ' 92  D4.4'
+               'P 42 2 2'      ' 93  D4.5'
+               'P 42 21 2'     ' 94  D4.6'
+               'P 43 2 2'      ' 95  D4.7'
+               'P 43 21 2'     ' 96  D4.8'
+               'I 4 2 2'       ' 97  D4.9'
+               'I 41 2 2'      ' 98  D4.10'
+               'P 4 m m'       ' 99  C4v.1'
+               'P 4 b m'       '100  C4v.2'
+               'P 42 c m'      '101  C4v.3'
+               'P 42 n m'      '102  C4v.4'
+               'P 4 c c'       '103  C4v.5'
+               'P 4 n c'       '104  C4v.6'
+               'P 42 m c'      '105  C4v.7'
+               'P 42 b c'      '106  C4v.8'
+               'I 4 m m'       '107  C4v.9'
+               'I 4 c m'       '108  C4v.10'
+               'I 41 m d'      '109  C4v.11'
+               'I 41 c d'      '110  C4v.12'
+               'P -4 2 m'      '111  D2d.1'
+               'P -4 2 c'      '112  D2d.2'
+               'P -4 21 m'     '113  D2d.3'
+               'P -4 21 c'     '114  D2d.4'
+               'P -4 m 2'      '115  D2d.5'
+               'P -4 c 2'      '116  D2d.6'
+               'P -4 b 2'      '117  D2d.7'
+               'P -4 n 2'      '118  D2d.8'
+               'I -4 m 2'      '119  D2d.9'
+               'I -4 c 2'      '120  D2d.10'
+               'I -4 2 m'      '121  D2d.11'
+               'I -4 2 d'      '122  D2d.12'
+               'P 4/m m m'     '123  D4h.1'
+               'P 4/m c c'     '124  D4h.2'
+               'P 4/n b m'     '125  D4h.3'
+               'P 4/n n c'     '126  D4h.4'
+               'P 4/m b m'     '127  D4h.5'
+               'P 4/m n c'     '128  D4h.6'
+               'P 4/n m m'     '129  D4h.7'
+               'P 4/n c c'     '130  D4h.8'
+               'P 42/m m c'    '131  D4h.9'
+               'P 42/m c m'    '132  D4h.10'
+               'P 42/n b c'    '133  D4h.11'
+               'P 42/n n m'    '134  D4h.12'
+               'P 42/m b c'    '135  D4h.13'
+               'P 42/m n m'    '136  D4h.14'
+               'P 42/n m c'    '137  D4h.15'
+               'P 42/n c m'    '138  D4h.16'
+               'I 4/m m m'     '139  D4h.17'
+               'I 4/m c m'     '140  D4h.18'
+               'I 41/a m d'    '141  D4h.19'
+               'I 41/a c d'    '142  D4h.20'
+               'P 3'           '143  C3.1'
+               'P 31'          '144  C3.2'
+               'P 32'          '145  C3.3'
+               'R 3'           '146  C3.4'
+               'P -3'          '147  C3i.1'
+               'R -3'          '148  C3i.2'
+               'P 3 1 2'       '149  D3.1'
+               'P 3 2 1'       '150  D3.2'
+               'P 31 1 2'      '151  D3.3'
+               'P 31 2 1'      '152  D3.4'
+               'P 32 1 2'      '153  D3.5'
+               'P 32 2 1'      '154  D3.6'
+               'R 3 2'         '155  D3.7'
+               'P 3 m 1'       '156  C3v.1'
+               'P 3 1 m'       '157  C3v.2'
+               'P 3 c 1'       '158  C3v.3'
+               'P 3 1 c'       '159  C3v.4'
+               'R 3 m'         '160  C3v.5'
+               'R 3 c'         '161  C3v.6'
+               'P -3 1 m'      '162  D3d.1'
+               'P -3 1 c'      '163  D3d.2'
+               'P -3 m 1'      '164  D3d.3'
+               'P -3 c 1'      '165  D3d.4'
+               'R -3 m'        '166  D3d.5'
+               'R -3 c'        '167  D3d.6'
+               'P 6'           '168  C6.1'
+               'P 61'          '169  C6.2'
+               'P 65'          '170  C6.3'
+               'P 62'          '171  C6.4'
+               'P 64'          '172  C6.5'
+               'P 63'          '173  C6.6'
+               'P -6'          '174  C3h.1'
+               'P 6/m '        '175  C6h.1'
+               'P 63/m'        '176  C6h.2'
+               'P 6 2 2'       '177  D6.1'
+               'P 61 2 2'      '178  D6.2'
+               'P 65 2 2'      '179  D6.3'
+               'P 62 2 2'      '180  D6.4'
+               'P 64 2 2'      '181  D6.5'
+               'P 63 2 2'      '182  D6.6'
+               'P 6 m m'       '183  C6v.1'
+               'P 6 c c'       '184  C6v.2'
+               'P 63 c m'      '185  C6v.3'
+               'P 63 m c'      '186  C6v.4'
+               'P -6 m 2'      '187  D3h.1'
+               'P -6 c 2'      '188  D3h.2'
+               'P -6 2 m'      '189  D3h.3'
+               'P -6 2 c'      '190  D3h.4'
+               'P 6/m m m'     '191  D6h.1'
+               'P 6/m c c'     '192  D6h.2'
+               'P 63/m c m'    '193  D6h.3'
+               'P 63/m m c'    '194  D6h.4'
+               'P 2 3'         '195  T.1'
+               'F 2 3'         '196  T.2'
+               'I 2 3'         '197  T.3'
+               'P 21 3'        '198  T.4'
+               'I 21 3'        '199  T.5'
+               'P m -3'        '200  Th.1'
+               'P n -3'        '201  Th.2'
+               'F m -3'        '202  Th.3'
+               'F d -3'        '203  Th.4'
+               'I m -3'        '204  Th.5'
+               'P a -3'        '205  Th.6'
+               'I a -3'        '206  Th.7'
+               'P 4 3 2'       '207  O.1'
+               'P 42 3 2'      '208  O.2'
+               'F 4 3 2'       '209  O.3'
+               'F 41 3 2'      '210  O.4'
+               'I 4 3 2'       '211  O.5'
+               'P 43 3 2'      '212  O.6'
+               'P 41 3 2'      '213  O.7'
+               'I 41 3 2'      '214  O.8'
+               'P -4 3 m'      '215  Td.1'
+               'F -4 3 m'      '216  Td.2'
+               'I -4 3 m'      '217  Td.3'
+               'P -4 3 n'      '218  Td.4'
+               'F -4 3 c'      '219  Td.5'
+               'I -4 3 d'      '220  Td.6'
+               'P m -3 m'      '221  Oh.1'
+               'P n -3 n'      '222  Oh.2'
+               'P m -3 n'      '223  Oh.3'
+               'P n -3 m'      '224  Oh.4'
+               'F m -3 m'      '225  Oh.5'
+               'F m -3 c'      '226  Oh.6'
+               'F d -3 m'      '227  Oh.7'
+               'F d -3 c'      '228  Oh.8'
+               'I m -3 m'      '229  Oh.9'
+               'I a -3 d'      '230  Oh.10'
+    save_
+
+save_units_code
+
+     loop_
+         _enumeration_set.state
+         _enumeration_set.detail
+
+   'none' "dimensionless - e.g. a ratio, factor, weight or scale"
+
+   'unspecified'
+   "no units supplied - the correct units should be derived based on the context"
+
+   'coulomb'        "electronic charge in coulombs"
+   'electron_volts' "electronic charge in electron volts eV"
+
+   'metres'       "length    'metres (metres * 10^(0))'"
+   'centimetres'  "length    'centimetres (metres * 10^( -2))'"
+   'millimetres'  "length    'millimetres (metres * 10^( -3))'"
+   'micrometres'  "length    'micrometres (metres * 10^( -6))'"
+   'nanometres'   "length    'nanometres  (metres * 10^( -9))'"
+   'angstroms'    "length    'angstroms   (metres * 10^(-10))'"
+   'picometres'   "length    'picometres  (metres * 10^(-12))'"
+   'femtometres'  "length    'femtometres (metres * 10^(-15))'"
+
+   'reciprocal_centimetres'
+   "per_length 'reciprocal centimetres (metres * 10^( -2)^-1)'"
+   'reciprocal_millimetres'
+   "per_length 'reciprocal millimetres (metres * 10^( -3)^-1)'"
+   'reciprocal_nanometres'
+   "per-length 'reciprocal nanometres  (metres * 10^( -9)^-1)'"
+   'reciprocal_angstroms'
+   "per-length 'reciprocal angstroms   (metres * 10^(-10)^-1)'"
+   'reciprocal_angstrom_squared'
+   "per-area 'reciprocal angstroms^2'"
+   'reciprocal_picometres'
+   "per-length 'reciprocal picometres  (metres * 10^(-12)^-1)'"
+
+   'reciprocal_angstroms_per_pixel'
+   "unit for electron diffraction camera constant calibration factor"
+
+   'nanometre_squared'
+   "length_squared 'nanometres squared (metres * 10^( -9))^2'"
+   'angstrom_squared'
+   "length_squared 'angstroms squared  (metres * 10^(-10))^2'"
+   '8pi_angstroms_squared'
+   "length_squared '8pi^2 * angstroms squared (metres * 10^(-10))^2'"
+   'picometre_squared'
+   "length_squared 'picometres squared (metres * 10^(-12))^2'"
+   'femtometre_squared'
+   "length_squared 'femtometres squared (metres * 10^(-15))^2'"
+
+   'nanometre_cubed'
+   "length_cubed 'nanometres cubed (metres * 10^( -9))^3'"
+   'angstrom_cubed'
+   "length_cubed 'angstroms cubed  (metres * 10^(-10))^3'"
+   'picometre_cubed'
+   "length_cubed 'picometres cubed (metres * 10^(-12))^3'"
+
+   'grams_per_centimetre_cubed' "density 'grams per cubic centimetre'"
+   'kilograms_per_metre_cubed' "density 'kilograms per cubic metre'"
+   'megagrams_per_metre_cubed' "density 'megagrams per cubic metre'"
+   'angstrom_cubed_per_dalton' "density 'angstrom cubed per dalton'"
+
+   'millimetres_squared_per_gram' "mass absorption 'square millimetres per gram'"
+   'centimetres_squared_per_gram' "mass absorption 'square centimetres per gram'"
+
+   'kilopascals'      "pressure      'kilopascals'"
+   'gigapascals'      "pressure      'gigapascals'"
+
+   'hours'            "time      'hours'"
+   'minutes'          "time      'minutes'"
+   'seconds'          "time      'seconds'"
+   'microseconds'     "time      'microseconds'"
+
+   'hertz'          "frequency      'reciprocal seconds'"
+
+   'degrees'          "angle      'degrees (of arc)'"
+   'cycles'           "phase      'angle in 360 degree arcs'"
+   'radians'          "angle      'radians'"
+   'degrees_squared'   "angle      'degrees (of arc)'"
+
+   'degree_per_minute' "rotation_per_time  'degrees (of arc) per minute'"
+
+   'Celsius'      "temperature     'degrees (of temperature) Celsius'"
+   'kelvins'      "temperature     'temperature in kelvins'"
+   'kelvins_per_minute' "cooling rate 'kelvins per minute'"
+
+   'electrons'    "electrons              'electrons'"
+
+   'electron_squared'  "electrons-squared    'electrons squared'"
+
+   'electrons_per_angstrom'
+   "electrostatic potential in Gaussian unit system: 1 V = 0.069420 e/angstrom (electron diffraction) 'electrons per angstrom  (electrons * (metres * 10^(-10))^(-1))'"
+
+   'electrons_per_nanometre_cubed'
+   "electron-density 'electrons per nanometres cubed (electrons * (metres * 10^( -9))^(-3))'"
+   'electrons_per_angstrom_cubed'
+   "electron-density 'electrons per angstroms  cubed (electrons * (metres * 10^(-10))^(-3))'"
+   'electrons_per_picometre_cubed'
+   "electron-density 'electrons per picometres cubed (electrons * (metres * 10^(-12))^(-3))'"
+
+   'electrons_per_angstrom_squared_per_second'
+   "electron flux density  'electrons per angstrom squared per second  (electrons * (metres * 10^(-10))^(-2) * (seconds^(-1)))'"
+
+   'femtometres_per_angstrom_cubed'
+   "scattering-length-density 'femtometres per angstroms cubed (10^-6 * (metres * 10^(-10))^(-2))'"
+
+   'dalton'      "standard atomic mass unit"
+
+   'pixels_per_millimetre'  "area resolution unit"
+   'pixels_per_element'     "area resolution unit"
+
+   'kilowatts'     "power       'kilowatts'"
+   'milliamperes'  "current     'milliamperes'"
+   'kilovolts'     "emf         'kilovolts'"
+
+   'volt_squared'     "emf         'volts squared'"
+   'Bohr_magnetons'   "magnetic moment"
+
+   'arbitrary'    "arbitrary    'arbitrary system of units'"
+
+   'counts_per_photon' "measure of gain used in array detectors"
+   'counts'            "counts from a detector"
+   'counts_per_second' "counts from a detector per second of count time"
+   'photons_per_second'  "photons registered in one second"
+
+   'photons'       "photons     'photons'"
+
+   'photons_per_micrometre_squared'
+   "electromagnetic radiation fluence  'photons per micrometre squared (photons * (metres * 10^(-6))^(-2))'"
+
+   'photons_per_second_per_micrometre_squared'
+   "electromagnetic radiation flux density  'photons per second per micrometre squared (photons * (seconds^(-1)) * (metres * 10^(-6))^(-2))'"
+
+   'photons_per_millimetre_squared_per_second'
+   "electromagnetic radiation flux density  'photons per millimetre squared per second  (photons * (metres * 10^(-3))^(-2) * (seconds^(-1)))'"
+
+   'neutrons_per_millimetre_squared_per_second'
+   "neutron flux density  'neutrons per millimetre squared per second  (neutrons * (metres * 10^(-3))^(-2) * (seconds^(-1)))'"
+
+   'megagray'     "radiation dose       'megagrays'"
+
+   'microseconds_per_angstrom' "TOF coefficient '(seconds * 10^(-6)) * (metres * 10^(-10)^(-1))'"
+   'microseconds_per_angstrom_squared' "TOF coefficient '(seconds * 10^(-6)) * (metres * 10^(-10)^(-2))'"
+   'microseconds_per_angstrom_cubed' "TOF coefficient '(seconds * 10^(-6)) * (metres * 10^(-10)^(-3))'"
+   'angstroms_per_microsecond'       "TOF coefficient '(metres * 10^(-10)) * (seconds * 10^(-6)^(-1))'"
+
+   'electron_volts_per_angstrom' "force 'electron volts per angstrom (eV * (metres * 10^(-10)^(-1)))'"
+    save_
+
+save_schoenflies
+     loop_
+    _enumeration_set.state
+               C1.1 Ci.1
+               C2.1 C2.2 C2.3
+               Cs.1 Cs.2 Cs.3 Cs.4
+               C2h.1 C2h.2 C2h.3 C2h.4 C2h.5 C2h.6
+               D2.1 D2.2 D2.3 D2.4 D2.5 D2.6 D2.7 D2.8 D2.9
+               C2v.1 C2v.2 C2v.3 C2v.4 C2v.5 C2v.6 C2v.7 C2v.8 C2v.9 C2v.10
+               C2v.11 C2v.12 C2v.13 C2v.14 C2v.15 C2v.16 C2v.17 C2v.18 C2v.19
+               C2v.20 C2v.21 C2v.22
+               D2h.1 D2h.2 D2h.3 D2h.4 D2h.5 D2h.6 D2h.7 D2h.8 D2h.9 D2h.10
+               D2h.11 D2h.12 D2h.13 D2h.14 D2h.15 D2h.16 D2h.17 D2h.18 D2h.19
+               D2h.20 D2h.21 D2h.22 D2h.23 D2h.24 D2h.25 D2h.26 D2h.27 D2h.28
+               C4.1 C4.2 C4.3 C4.4 C4.5 C4.6
+               S4.1 S4.2
+               C4h.1 C4h.2 C4h.3 C4h.4 C4h.5 C4h.6
+               D4.1 D4.2 D4.3 D4.4 D4.5 D4.6 D4.7 D4.8 D4.9 D4.10
+               C4v.1 C4v.2 C4v.3 C4v.4 C4v.5 C4v.6 C4v.7 C4v.8 C4v.9 C4v.10
+               C4v.11 C4v.12
+               D2d.1 D2d.2 D2d.3 D2d.4 D2d.5 D2d.6 D2d.7 D2d.8 D2d.9 D2d.10
+               D2d.11 D2d.12
+               D4h.1 D4h.2 D4h.3 D4h.4 D4h.5 D4h.6 D4h.7 D4h.8 D4h.9 D4h.10
+               D4h.11 D4h.12 D4h.13 D4h.14 D4h.15 D4h.16 D4h.17 D4h.18 D4h.19
+               D4h.20
+               C3.1 C3.2 C3.3 C3.4
+               C3i.1 C3i.2
+               D3.1 D3.2 D3.3 D3.4 D3.5 D3.6 D3.7
+               C3v.1 C3v.2 C3v.3 C3v.4 C3v.5 C3v.6
+               D3d.1 D3d.2 D3d.3 D3d.4 D3d.5 D3d.6
+               C6.1 C6.2 C6.3 C6.4 C6.5 C6.6
+               C3h.1
+               C6h.1 C6h.2
+               D6.1 D6.2 D6.3 D6.4 D6.5 D6.6
+               C6v.1 C6v.2 C6v.3 C6v.4
+               D3h.1 D3h.2 D3h.3 D3h.4
+               D6h.1 D6h.2 D6h.3 D6h.4
+               T.1 T.2 T.3 T.4 T.5
+               Th.1 Th.2 Th.3 Th.4 Th.5 Th.6 Th.7
+               O.1 O.2 O.3 O.4 O.5 O.6 O.7 O.8
+               Td.1 Td.2 Td.3 Td.4 Td.5 Td.6
+               Oh.1 Oh.2 Oh.3 Oh.4 Oh.5 Oh.6 Oh.7 Oh.8 Oh.9 Oh.10
+
+save_
+
+save_atomic_number
+
+    _units.code                   none
+
+     loop_
+         _enumeration_default.index
+         _enumeration_default.value
+    H    1    D    1    He   2    Li   3    Be     4
+    B    5    C    6    N    7    O    8    F      9
+    Ne  10    Na  11    Mg  12    Al  13    Si    14
+    P   15    S   16    Cl  17    Ar  18    K     19
+    Ca  20    Sc  21    Ti  22    V   23    Cr    24
+    Mn  25    Fe  26    Co  27    Ni  28    Cu    29
+    Zn  30    Ga  31    Ge  32    As  33    Se    34
+    Br  35    Kr  36    Rb  37    Sr  38    Y     39
+    Zr  40    Nb  41    Mo  42    Tc  43    Ru    44
+    Rh  45    Pd  46    Ag  47    Cd  48    In    49
+    Sn  50    Sb  51    Te  52    I   53    Xe    54
+    Cs  55    Ba  56    La  57    Ce  58    Pr    59
+    Nd  60    Pm  61    Sm  62    Eu  63    Gd    64
+    Tb  65    Dy  66    Ho  67    Er  68    Tm    69
+    Yb  70    Lu  71    Hf  72    Ta  73    W     74
+    Re  75    Os  76    Ir  77    Pt  78    Au    79
+    Hg  80    Tl  81    Pb  82    Bi  83    Po    84
+    At  85    Rn  86    Fr  87    Ra  88    Ac    89
+    Th  90    Pa  91    U   92    Np  93    Pu    94
+    Am  95    Cm  96    Bk  97    Cf  98    Es    99
+    Fm 100    Md 101    No 102    Lr 103    Rf   104
+    Db 105    Sg 106    Bh 107    Hs 108    Mt   109
+    Ds 110    Rg 111    Cn 112    Nh 113    Fl   114
+    Mc 115    Lv 116    Ts 117    Og 118
+
+save_
+
+#=============================================================================
+#  The dictionary's creation history.
+#============================================================================
+
+    loop_
+      _dictionary_audit.version
+      _dictionary_audit.date
+      _dictionary_audit.revision
+         1.0.1                    2005-12-12
+;
+       Initial version of the TEMPLATES dictionary created from the
+       definitions used in CORE_3 dictionary version 3.5.02
+;
+         1.1.0                    2006-02-12
+;
+       Remove dictionary attributes from a save frame.
+       Change category core_templates to template
+;
+         1.2.1                    2006-02-21
+;
+       File structure to conform with prototype version dictionaries.
+;
+         1.2.2                    2006-03-07
+;
+       Added the template _template.relational_id for the ddl3 dictionary.
+;
+         1.2.3                    2006-06-20
+;
+       Apply DDL 3.6.04 attributes.
+;
+         1.2.4                    2006-06-27
+;
+       Change filename to com_val.dic.
+       apply DDL 3.6.05 changes.
+       add 'context' and 'method' enumerated lists
+       add 'enumeration_default' blocks to this file
+;
+         1.2.5                    2006-08-30
+;
+       In type.contents change constrction of Otag to 'ANchar [_]'
+;
+         1.2.6                    2006-11-13
+;
+       Remove method and context frames
+;
+         1.2.7                    2006-12-14
+;
+       Apply DDL3 3.7.01 attributes.
+;
+         1.2.8                    2007-10-11
+;
+       Correct definitions of Ctag and Otag in _type.contents
+;
+         1.2.9                    2011-03-25
+;
+       Change the syntax of "Filename" in type_contents enumeration set.
+;
+         1.3.1                    2011-08-03
+;
+       Remove definition.id lines in keeping with nested imports.
+;
+         1.3.2                    2011-12-01
+;
+       Update the DDL version. No Matrix types present.
+;
+         1.3.3                    2012-05-07
+;
+       Update the DDL version. Change dictionary class to Template
+;
+         1.3.4                    2012-07-08
+;
+       Remove type.contents enumeration list
+;
+         1.3.5                    2012-10-16
+;
+       Change all element symbols in the ion-to-elemnt default list to Upper
+       and lower case characters (from all upper).
+;
+         1.4.1                    2013-03-08
+;
+       Changes arising from alerts issued by ALIGN.
+;
+         1.4.2                    2013-04-16
+;
+       Changed type.source 'Measured' to 'Recorded'
+;
+         1.4.3                    2014-06-09
+;
+       Inserted dummy line at top of each frame; this is skipped on import
+;
+         1.4.4                    2016-04-01
+;
+       Added Bohr magnetons and radians to the units list (James Hester)
+;
+         1.4.5                    2016-05-13
+;
+       Added Schoenflies group list (James Hester)
+;
+         1.4.6                    2017-12-12
+;
+       Updated atom symbol list for newly-named elements (James Hester)
+;
+         1.4.7                    2019-12-09
+;
+       Updated the human-readable descriptions of the 'kelvins' and
+       'kelvins_per_minute' enumeration states in the _units_code save frame.
+;
+         1.4.8                    2023-06-14
+;
+       Corrected a few typos in the 'units_code' save frame.
+
+       Added deuterium (D) to the 'element_symbol' save frame.
+
+       Corrected several discrepancies in the 'colour_hue' save frame:
+       replaced colour value 'unknown' with CIF special value '?',
+       renamed colour 'steel_grey' to 'grey_steel', renamed colour
+       'violet' to 'violet_magenta'.
+
+       Added the 'grey_steel' colour to the 'colour_RGB' save frame.
+
+       Added the 'Wyckoff_letter' save frame.
+
+       Changed the DDL conformance version number from 3.11.04 to 4.1.0.
+
+       Changed a duplicate version number in the DICTIONARY_AUDIT loop
+       from 1.0.1 to 1.1.0.
+
+       Added the 'micrometres', 'counts', 'photons per second' and
+       'femtometres_per_angstrom_cubed' enumeration states to the
+       'units_code' save frame.
+
+       Added units for TOF coefficients.
+
+       Corrected the descriptions of the 'electrons_per_nanometre_cubed',
+       'electrons_per_angstrom_cubed', 'electrons_per_picometre_cubed' and
+       'femtometre_squared' enumeration states in the 'units_code' save frame.
+;
+         1.4.9                    2025-07-04
+;
+       # Please update the date above and describe the change below until
+       # ready for the next release
+
+       Altered hi_ang_Fox_c2 and hi_ang_Fox_c3 values to have them be the
+       correct magnitude, rather than their 10x and 100x values, respectively.
+
+       Corrected atom codes in several save frames.
+
+       Corrected the electron count of U6+ in the 'electron_count' save frame.
+
+       Added Flerovium (Fl), Livermorium (Lv), Moscovium (Mc), Nihonium (Nh),
+       Oganesson (Og), and Tennessine (Ts) to the 'element_symbol' save frame.
+
+       Updated the values for V2+, V3+ and V5+ in the 'length_neutron' save
+       frame to match those of V.
+
+       Altered key of atomic_number, dispersion_real_Cu,
+       dispersion_imag_Cu, dispersion_real_Mo, and dispersion_imag_Mo to be
+       keyed on _atom_type.element_symbol.
+
+       The enumeration for wyckoff_letter includes both \a and α to represent
+       the Greek letter 'alpha'.
+
+       Added hertz and counts_per_second to units_code.
+
+       Renamed the 'photons per second' unit to 'photons_per_second'.
+
+       Added BIncStrDB to save_database_list. (bm)
+
+       Added electrons_per_angstrom and reciprocal_angstroms_per_pixel
+       for electron diffraction; extended description of the former. (bm)
+
+       Added megagray, electrons_per_angstrom_squared_per_second,
+       photons_per_millimetre_squared_per_second and
+       neutrons_per_millimetre_squared_per_second for radiation dose
+       and flux density (bm)
+
+       Added 'photons', 'photons_per_micrometre_squared' and
+       'photons_per_second_per_micrometre_squared' units. (av)
+;

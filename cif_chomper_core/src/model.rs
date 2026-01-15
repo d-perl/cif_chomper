@@ -37,9 +37,9 @@ impl std::fmt::Display for Model<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         writeln!(f, "Model - {}", self.heading)?;
         for (i, b) in self.content.iter().enumerate() {
-            writeln!(f, "--- start-block {i} ---")?;
+            writeln!(f, "--- < block {i} ---")?;
             write!(f, "{b}")?;
-            writeln!(f, "--- end-block {i} ---")?;
+            writeln!(f, "--- block {i} > ---")?;
         }
         Ok(())
     }
@@ -55,9 +55,9 @@ impl std::fmt::Display for Block<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         writeln!(f, "Block - {}", self.heading)?;
         for (i, bi) in self.content.iter().enumerate() {
-            writeln!(f, "--- start-item {i} ---")?;
+            writeln!(f, "- < item {i} -")?;
             write!(f, "{bi}")?;
-            writeln!(f, "--- end-item {i} ---")?;
+            writeln!(f, "- item {i} > -")?;
         }
         Ok(())
     }
@@ -104,8 +104,8 @@ impl std::fmt::Display for DataItem<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             DataItem::Data { name, value } => {
-                writeln!(f, "Data: '{name}'")?;
-                writeln!(f, "\t{value}")?;
+                writeln!(f, "Data:")?;
+                writeln!(f, "\t{name}: \t{value}")?;
                 Ok(())
             }
             DataItem::DataLoop { names, values } => {
