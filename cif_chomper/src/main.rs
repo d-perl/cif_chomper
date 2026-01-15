@@ -4,7 +4,8 @@ use cif_chomper_core::parser::cif2_file;
 fn main() {
     // let raw_content = include_str!("../../cif_core/cif_core.dic");
 
-    let raw_content = include_str!("../../cif_chomper/cif_core_example.dic");
+    // let raw_content = include_str!("../../cif_chomper/cif_core_example.dic");
+    let raw_content = include_str!("../../cif_chomper/templ_enum.cif");
     let model = cif2_file(raw_content).expect("parse fail");
     dbg!(model);
     // let content = model.content;

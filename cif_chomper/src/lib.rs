@@ -90,4 +90,8 @@ mod tests {
             });
         }
     }
+
+    // TODO: can have a round-trip test ddl00 -> model00 -> ddl01 -> model00 -> ddl02
+    // test model00 print the same as model00 (test parsing)
+    // test ddl01 the same as ddl02 (test cif writing)
 }
