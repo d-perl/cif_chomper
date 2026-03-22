@@ -8,7 +8,6 @@ use proc_macro2::Span;
 use proc_macro2::TokenStream;
 use quote::quote;
 // use std::collections::HashMap;
-use std::fs;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::Path;
@@ -193,7 +192,7 @@ where
 
 fn main() {
     let dst_path = Path::new("./src/__cif_vessel.rs");
-    let mut file = BufWriter::new(File::create(&dst_path).unwrap());
+    let mut file = BufWriter::new(File::create(dst_path).unwrap());
     cif_vessel_codegen(&mut file);
 
     println!("cargo::rerun-if-changed=./cif_core/cif_core.dic");
