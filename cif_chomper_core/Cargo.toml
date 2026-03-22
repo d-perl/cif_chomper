@@ -10,6 +10,10 @@ edition = "2024"
 log = "0.4.29"
 const-str = "0.6.4"
 nom = "8.0.0"
+proc-macro2 = "1.0.106"
+quote = "1.0.45"
+syn.workspace = true
+phf_codegen = "0.13.1"
 
 [dev-dependencies]
 rstest = "0.25.0"
