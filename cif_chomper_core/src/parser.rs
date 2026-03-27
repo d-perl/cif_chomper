@@ -473,13 +473,13 @@ x,-y+1/4,-z+1/4
     #[rstest]
     #[case("\n#'F\\'erey, G.'\n_publ_section_title abcde", "", false)]
     #[case("\nx,y,z\nx,-y+1/4,-z+1/4", "\nx,-y+1/4,-z+1/4", true)]
-    fn test_wspace_delim_sol(#[case] input: &str, #[case] expected: &str, #[case] good: bool) {
+    fn test_wspace_delim_sol(#[case] input: &str, #[case] _expected: &str, #[case] good: bool) {
         if good {
             let (inp, _) = wspace_lines(input).unwrap();
-            let (inp, val) = wsdelim_string_sol(inp).unwrap();
+            let (_inp, _val) = wsdelim_string_sol(inp).unwrap();
         } else {
             let (inp, _) = wspace_lines(input).unwrap();
-            let t = peek(is_not::<&str, &str, Error<&str>>(LEAD)).parse(inp);
+            let _t = peek(is_not::<&str, &str, Error<&str>>(LEAD)).parse(inp);
             assert!(wsdelim_string_sol(inp).is_err());
         }
     }

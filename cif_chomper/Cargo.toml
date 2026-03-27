@@ -4,11 +4,12 @@ crate-type = ["lib"]
 [package]
 name = "cif_chomper"
 version = "0.1.0"
+license = "LGPL-3.0"
 edition = "2024"
 
 [dependencies]
-log = {workspace = true}
-cif_chomper_core = {path = "../cif_chomper_core"}
+log = { workspace = true }
+cif_chomper_core = { path = "../cif_chomper_core" }
 phf = "0.13.1"
 
 [build-dependencies]
@@ -16,6 +17,6 @@ quote = "1"
 syn = "2"
 proc-macro2 = "1"
 prettyplease = "0.2"
-pest = "2"  
-cif_chomper_core = {path = "../cif_chomper_core"}
+pest = "2"
+cif_chomper_core = { path = "../cif_chomper_core" }
 phf_codegen = "0.13.1"
