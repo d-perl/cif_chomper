@@ -18,17 +18,23 @@ struct Category {
     items: Vec<Item>,
 }
 
-// struct SaveData {}
-// struct SaveCategory {}
+// TODO:
+// This file should iterate through a DDL-language dictionary (e.g. the cif core dictionary) and
+// create structs based on the attributes it finds there. It will look something like
 //
-// enum SaveFrame {
-//     Data(SaveData),
-//     Category(SaveCategory),
+// Cif {
+//   publication: Option<Publication>
+//   diffraction: Option<Diffraction>
+//   ...
 // }
-
-// fn convert_model_to_tbl(model: Model) -> HashMap<(&str, &str), SaveFrame> {
-//     todo!();
-// }
+//
+//  Diffraction {
+//    total_exposure_time: Option<f64>
+//    ...
+//  }
+//
+//
+//  and have an implementation of From<RawModel>
 
 fn generate_struct(category: &Category) -> TokenStream {
     let struct_name = Ident::new(&category.name, Span::call_site());
@@ -164,16 +170,6 @@ where
             }
         }
     }
-
-    // TODO: get a second table and have parent points its to children
-    // TODO: dfs the tree from head, codegen the struct along the traversal.
-    // let tokens = quote! {
-    //     #(#tks)*
-    // };
-    // let file: File = syn::parse2(tokens).unwrap();
-    //
-    // prettyplease::unparse(&file)
-    // todo!()
 }
 
 // #[cfg(test)]

@@ -1,2 +1,0 @@
-- why const_str? where is the performance panalty to not using it??
-- use nom-8 without .parse(input) but do (input) directly.
