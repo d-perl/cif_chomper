@@ -42,14 +42,14 @@ mod tests {
     use cif_chomper_core::parser::cif2_file;
     use std::sync::OnceLock;
 
-    static DDL: &str = include_str!("../../cif_core/ddl.dic");
+    static DDL: &str = include_str!("../vendor/cif_core/ddl.dic");
     static DDL_MODEL: OnceLock<Model<'static>> = OnceLock::new();
 
     pub fn ddl_model() -> &'static Model<'static> {
         DDL_MODEL.get_or_init(|| cif2_file(DDL).unwrap())
     }
 
-    const DICT: &str = include_str!("../../cif_core/cif_core.dic");
+    const DICT: &str = include_str!("../vendor/cif_core/cif_core.dic");
     static DICT_MODEL: OnceLock<Model<'static>> = OnceLock::new();
 
     pub fn dict_model() -> &'static Model<'static> {
