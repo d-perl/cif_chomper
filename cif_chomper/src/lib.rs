@@ -2,17 +2,11 @@ pub mod vessel {
     include!("./__cif_vessel.rs");
 }
 
-mod _vessel_be_like;
-
-// use vessel::Cell;
-
 pub type Result<T> = std::result::Result<T, CifParserError>;
 
 #[derive(Debug)]
 pub enum CifParserError {
     Io(std::io::Error),
-    // WrapperError(CextxyzError),
-    // InvalidValue(&'static str),
 }
 
 impl std::fmt::Display for CifParserError {
@@ -31,10 +25,6 @@ impl std::error::Error for CifParserError {
         }
     }
 }
-
-// pub fn read_structure<R>(rd: &mut R) -> Result<Structure> {
-//     todo!()
-// }
 
 #[cfg(test)]
 mod tests {
