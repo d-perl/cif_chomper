@@ -1,5 +1,5 @@
 pub mod vessel {
-    include!("./__cif_vessel.rs");
+    include!(concat!(env!("OUT_DIR"), "/cif_vessel.rs"));
 }
 
 pub type Result<T> = std::result::Result<T, CifParserError>;
