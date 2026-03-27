@@ -6,6 +6,10 @@ name = "cif_chomper_core"
 version = "0.1.0"
 license = "LGPL-3.0"
 edition = "2024"
+description = "Core tools for generating data structures for DDL dictionaries such as the CIF format."
+repository = "https://github.com/d-perl/cif_chomper"
+categories = ["science"]
+keywords = ["CIF", "crystallography", "parser"]
 
 [dependencies]
 log = "0.4.29"
