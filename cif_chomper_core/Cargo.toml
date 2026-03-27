@@ -1,9 +1,10 @@
 [lib]
-crate-type = ["cdylib","lib"]
+crate-type = ["cdylib", "lib"]
 
 [package]
 name = "cif_chomper_core"
 version = "0.1.0"
+license = "LGPL-3.0"
 edition = "2024"
 
 [dependencies]
