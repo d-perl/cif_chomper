@@ -6,6 +6,8 @@ name = "cif_chomper"
 version = "0.1.0"
 license = "LGPL-3.0"
 edition = "2024"
+description = "A library and commandline tool for parsing Crystallographic Information File data into ergonomic structures."
+repository = "https://github.com/d-perl/cif_chomper"
 
 [dependencies]
 log = { workspace = true }
