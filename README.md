@@ -7,8 +7,16 @@ the CIF dictionary definition.
 
 ## Development
 
-To compile locally, need `cif_core` to include the full specification.
+To compile locally, you need the `cif_core` library to include the full specification for the CIF format. It is included as a submodule, and can be included when this repository is cloned with:
 
 ```console
 git clone --recurse-submodules https://github.com/d-perl/cif_chomper
 ```
+
+or after cloning with:
+
+```console
+git submodule update --init
+```
+
+You can find the CIF core library at https://github.com/COMCIFS/cif_core/.
