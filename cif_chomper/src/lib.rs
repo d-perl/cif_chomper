@@ -74,11 +74,6 @@ mod tests {
     fn test_dict_model_content() {
         let content = &dict_model().content;
         dbg!(&dict_model().heading);
-        for block in &content.as_slice()[0..1] {
-            block.content.iter().for_each(|i| {
-                println!("{i}");
-            });
-        }
     }
 
     // TODO: can have a round-trip test ddl00 -> model00 -> ddl01 -> model00 -> ddl02
