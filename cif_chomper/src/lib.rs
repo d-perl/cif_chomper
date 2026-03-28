@@ -2,6 +2,8 @@ pub mod vessel {
     include!(concat!(env!("OUT_DIR"), "/cif_vessel.rs"));
 }
 
+pub mod models;
+
 pub type Result<T> = std::result::Result<T, CifParserError>;
 
 #[derive(Debug)]

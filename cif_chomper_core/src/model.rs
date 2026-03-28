@@ -1,5 +1,4 @@
-/* Corresponds to the hierarchy expressed by the CIF 2.0 / `DDLm` syntax, without
-any parsing or interpretation of data
+/* Corresponds to the hierarchy expressed by the CIF 2.0 / `DDLm` syntax, without any parsing or interpretation of data
 
 ```ext-EBNF
 block = block-heading, { block-content } ;
@@ -60,6 +59,18 @@ impl std::fmt::Display for Block<'_> {
             writeln!(f, "- item {i} > -")?;
         }
         Ok(())
+    }
+}
+
+impl Block<'_> {
+    pub fn find_single_value(&'_ self, name: &'_ str) -> Option<DataValue<'_>> {
+        for item in self.content.iter() {
+            match item {
+                BlockItem::SaveFrame { heading, content } => todo!(),
+                BlockItem::Data(data_item) => todo!(),
+            }
+        }
+        None
     }
 }
 

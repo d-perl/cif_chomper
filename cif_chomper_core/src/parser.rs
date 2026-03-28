@@ -312,7 +312,7 @@ fn file_content(input: &str) -> IResult<&str, Vec<Block<'_>>> {
 /// TODO:
 /// # Errors
 /// ???
-pub fn cif2_file(input: &str) -> Result<Model<'_>, &str> {
+pub fn cif2_file(input: &str) -> Result<Model<'_>, &'static str> {
     let (inp, heading) = file_heading(input).map_err(|_| "heading")?;
     let (inp, content) = file_content(inp).map_err(|_| "content")?;
     let (inp, _) = wspace_any(inp).map_err(|_| "trailing wspace")?;
